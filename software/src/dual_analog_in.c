@@ -103,6 +103,20 @@ void constructor(void) {
 	simple_constructor();
 
 	BC->sample_wait = BC->next_sample_wait;
+
+	SLEEP_MS(100);
+
+	// Set default config
+	const uint16_t config = CONFIG_CONFIG_AMCLK_1 |
+	                        CONFIG_CONFIG_OSR_4096 |
+	                        CONFIG_CONFIG_DITHER_MAX |
+	                        CONFIG_CONFIG_AZ_FREQ_LOW |
+	                        CONFIG_CONFIG_RESET_NONE |
+	                        CONFIG_CONFIG_SHUTDOWN_NONE |
+	                        CONFIG_CONFIG_VREFEXT_EN |
+	                        CONFIG_CONFIG_CLKEXT_CRYSTAL;
+	mcp3911_set_config(config);
+
 }
 
 void destructor(void) {
@@ -112,6 +126,7 @@ void destructor(void) {
 void tick(const uint8_t tick_type) {
 	if(tick_type & TICK_TASK_TYPE_CALCULATION) {
 		if((BC->tick % 250) == 0) {
+			mcp3911_get_config();
 			mcp3911_read_voltage();
 		}
 	}
@@ -127,22 +142,94 @@ void deselect(void) {
 	SPI_NCS.pio->PIO_SODR = SPI_NCS.mask;
 }
 
+void mcp3911_read_register(const uint8_t reg, const uint8_t length, uint8_t *data) {
+	select();
+	spibb_transceive_byte(ADDRESS_READ | ADDRESS_REGISTER(reg));
+	for(uint8_t i = 0; i < length; i++) {
+		data[i] = spibb_transceive_byte(0);
+	}
+	deselect();
+}
+
+void mcp3911_write_register(const uint8_t reg, const uint8_t length, const uint8_t *data) {
+	select();
+	spibb_transceive_byte(ADDRESS_WRITE | ADDRESS_REGISTER(reg));
+	for(uint8_t i = 0; i < length; i++) {
+		spibb_transceive_byte(data[i]);
+	}
+	deselect();
+}
+
 void mcp3911_read_voltage(void) {
 	uint8_t data[6];
 
 	// Read 6 bytes of data
-	select();
-	spibb_transceive_byte(ADDRESS_READ | ADDRESS_REGISTER(REG_CHANNEL_0));
-	for(uint8_t i = 0; i < 6; i++) {
-		data[i] = spibb_transceive_byte(0);
-	}
-	deselect();
+	mcp3911_read_register(REG_CHANNEL_0, 6, data);
 
 	BC->last_value[0] = BC->value[0];
 	BC->last_value[1] = BC->value[1];
 	BC->value[0] = data[0] | (data[1] << 8) | (data[2] << 16);
 	BC->value[1] = data[3] | (data[4] << 8) | (data[5] << 16);
 	BA->printf("values: %d %d\n\r", BC->value[0], BC->value[1]);
+}
+
+
+inline uint8_t mcp3911_get_gain(void) {
+	uint8_t value;
+
+	select();
+	spibb_transceive_byte(ADDRESS_READ | ADDRESS_REGISTER(REG_GAIN));
+	value = spibb_transceive_byte(0);
+	deselect();
+
+	return value;
+}
+
+inline void mcp3911_set_gain(const uint8_t value) {
+	select();
+	spibb_transceive_byte(ADDRESS_WRITE | ADDRESS_REGISTER(REG_GAIN));
+	spibb_transceive_byte(value);
+	deselect();
+}
+
+inline uint8_t mcp3911_get_status(void) {
+	uint16_t value;
+
+	select();
+	spibb_transceive_byte(ADDRESS_READ | ADDRESS_REGISTER(REG_STATUS));
+	value = spibb_transceive_byte(0);
+	value |= spibb_transceive_byte(0) << 8;
+	deselect();
+
+	return value;
+}
+
+inline void mcp3911_set_status(const uint16_t value) {
+	select();
+	spibb_transceive_byte(ADDRESS_WRITE | ADDRESS_REGISTER(REG_STATUS));
+	spibb_transceive_byte((uint8_t)value);
+	spibb_transceive_byte((uint8_t)(value >> 8));
+	deselect();
+}
+
+inline uint8_t mcp3911_get_config(void) {
+	uint16_t value;
+
+	select();
+	spibb_transceive_byte(ADDRESS_READ | ADDRESS_REGISTER(REG_CONFIG));
+	value = spibb_transceive_byte(0);
+	value |= spibb_transceive_byte(0) << 8;
+	deselect();
+
+	return value;
+}
+
+inline void mcp3911_set_config(const uint16_t value) {
+	select();
+	spibb_transceive_byte(ADDRESS_WRITE | ADDRESS_REGISTER(REG_CONFIG));
+	spibb_transceive_byte((uint8_t)(value >> 8));
+	spibb_transceive_byte((uint8_t)value);
+	deselect();
 }
 
 void get_sample_rate(const ComType com, const GetSampleRate *data) {
@@ -156,8 +243,8 @@ void get_sample_rate(const ComType com, const GetSampleRate *data) {
 }
 
 void set_sample_rate(const ComType com, const SetSampleRate *data) {
-	if(data->rate > CONFIG_CONVERSION_SAMPLE_RATE_244_SPS ||
-	   data->rate < CONFIG_CONVERSION_SAMPLE_RATE_976_SPS) {
+	if(data->rate > 0 /* TODO */ ||
+	   data->rate < 2 /* TODO */) {
 		BA->com_return_error(data, sizeof(MessageHeader), MESSAGE_ERROR_CODE_INVALID_PARAMETER, com);
 		return;
 	}
