@@ -26,6 +26,8 @@
 
 #include "bricklib/com/com_common.h"
 
+#define CALIBRATION_EEPROM_POSITION (BRICKLET_PLUGIN_MAX_SIZE + 96)
+
 #define SAMPLE_RATE_976_SPS 0
 #define SAMPLE_RATE_488_SPS 1
 #define SAMPLE_RATE_244_SPS 2
@@ -73,9 +75,9 @@
 #define CONFIG_GAIN_CH0_X2            0b00000001
 #define CONFIG_GAIN_CH0_X1            0b00000000         // default
 
-#define CONFIG_STATUS_MODOUT_CH1_MASK 0b1100000000000000
-#define CONFIG_STATUS_MODOUT_CH1_ON   0b1100000000000000
-#define CONFIG_STATUS_MODOUT_CH1_OFF  0b1000000000000000
+#define CONFIG_STATUS_MODOUT_CH1_MASK 0b1000000000000000
+#define CONFIG_STATUS_MODOUT_CH1_ON   0b1000000000000000
+#define CONFIG_STATUS_MODOUT_CH1_OFF  0b0000000000000000
 #define CONFIG_STATUS_MODOUT_CH0_MASK 0b0100000000000000
 #define CONFIG_STATUS_MODOUT_CH0_ON   0b0100000000000000
 #define CONFIG_STATUS_MODOUT_CH0_OFF  0b0000000000000000 // default
@@ -220,6 +222,10 @@ inline uint16_t mcp3911_get_config(void);
 inline void mcp3911_set_config(const uint16_t value);
 uint8_t spibb_transceive_byte(const uint8_t value);
 void use_new_sample_rate(void);
+void load_calibration_from_eeprom(int32_t offset[2], int32_t gain[2]);
+void load_calibration_from_mcp3911(int32_t offset[2], int32_t gain[2]);
+void save_calibration_to_eeprom(const int32_t offset[2], const int32_t gain[2]);
+void save_calibration_to_mcp3911(const int32_t offset[2], const int32_t gain[2]);
 
 void get_sample_rate(const ComType com, const GetSampleRate *data);
 void set_sample_rate(const ComType com, const SetSampleRate *data);

@@ -126,12 +126,19 @@ void constructor(void) {
 	BC->sum[0] = 0;
 	BC->sum[1] = 0;
 
+	// Load calibration from EEPROM and save it to mcp3911
+	int32_t offset[2];
+	int32_t gain[2];
+	load_calibration_from_eeprom(offset, gain);
+	save_calibration_to_mcp3911(offset, gain);
+
 	SLEEP_MS(100);
 
 	mcp3911_set_status(CONFIG_STATUS_MODOUT_CH0_OFF |
+	                   CONFIG_STATUS_MODOUT_CH1_OFF |
 	                   CONFIG_STATUS_HIZ_HIGHZ |
-	                   CONFIG_STATUS_MODE_CH1_PUL |
 	                   CONFIG_STATUS_MODE_CH0_PUL |
+	                   CONFIG_STATUS_MODE_CH1_PUL |
 	                   CONFIG_STATUS_STATUS_CH1_NRDY |
 	                   CONFIG_STATUS_STATUS_CH0_NRDY |
 	                   CONFIG_STATUS_READ_LOOP_TYPE |
@@ -144,14 +151,14 @@ void constructor(void) {
 	// Set default config
 	const uint16_t config = CONFIG_CONFIG_AMCLK_1 |
 	                        CONFIG_CONFIG_OSR_4096 |
-	                        CONFIG_CONFIG_DITHER_OFF |
+	                        CONFIG_CONFIG_DITHER_MAX |
 	                        CONFIG_CONFIG_AZ_FREQ_LOW |
 	                        CONFIG_CONFIG_RESET_NONE |
 	                        CONFIG_CONFIG_SHUTDOWN_NONE |
 	                        CONFIG_CONFIG_VREFINT_EN |
 	                        CONFIG_CONFIG_CLKEXT_CRYSTAL;
-	mcp3911_set_config(config);
 
+	mcp3911_set_config(config);
 }
 
 void destructor(void) {
@@ -160,9 +167,10 @@ void destructor(void) {
 
 void tick(const uint8_t tick_type) {
 	if(tick_type & TICK_TASK_TYPE_CALCULATION) {
-		if((BC->tick % 10) == 0) {
+		if((BC->tick % 5) == 0) { // max 244 samples/sec
 			const uint16_t status = mcp3911_get_status();
-			if((status & CONFIG_STATUS_STATUS_CH1_MASK) == CONFIG_STATUS_STATUS_CH1_RDY) {
+			if(((status & CONFIG_STATUS_STATUS_CH0_MASK) == CONFIG_STATUS_STATUS_CH0_RDY) ||
+			   ((status & CONFIG_STATUS_STATUS_CH1_MASK) == CONFIG_STATUS_STATUS_CH1_RDY)) {
 				mcp3911_read_voltage();
 			}
 		}
@@ -201,7 +209,7 @@ void mcp3911_read_voltage(void) {
 	uint8_t data[6];
 
 	// Read 6 bytes of data
-	mcp3911_read_register(REG_CHANNEL_0, 3, data);
+	mcp3911_read_register(REG_CHANNEL_0, 6, data);
 
 	BC->counter++;
 	if(BC->counter >= BC->count_to) {
@@ -379,48 +387,18 @@ void set_sample_rate(const ComType com, const SetSampleRate *data) {
 }
 
 void get_calibration(const ComType com, const GetCalibration *data) {
-	const uint8_t length = 3*2*2;
-	uint8_t cal[length];
-
-	// Read offset and gain for both channels
-	mcp3911_read_register(REG_OFFCAL_0, length, cal);
 	GetCalibrationReturn gcr;
 
 	gcr.header         = data->header;
 	gcr.header.length  = sizeof(GetCalibrationReturn);
-	for(uint8_t i = 0; i < NUM_SIMPLE_VALUES; i++) {
-		gcr.offset[i] = cal[2+i*6] | (cal[1+i*6] << 8) | (cal[0+i*6] << 16);
-		// 24 bit twos complement -> 32 bit twos complement
-		if(gcr.offset[i] & 0x800000) {
-			gcr.offset[i] |= 0xFF000000;
-		}
-		gcr.gain[i]   = cal[5+i*6] | (cal[4+i*6] << 8) | (cal[3+i*6] << 16);
-	}
+	load_calibration_from_mcp3911(gcr.offset, gcr.gain);
 
 	BA->send_blocking_with_timeout(&gcr, sizeof(GetCalibrationReturn), com);
 }
 
 void set_calibration(const ComType com, const SetCalibration *data) {
-	const uint8_t length = 3*2*2;
-	uint8_t cal[length];
-
-	for(uint8_t i = 0; i < NUM_SIMPLE_VALUES; i++) {
-		// 32 bit twos complement -> 24 bit twos complement
-		int32_t offset_tmp = data->offset[i];
-		if(offset_tmp & 0x80000000) {
-			offset_tmp |= 0x800000;
-		}
-
-		cal[0+i*6] = (offset_tmp >> 16)    & 0xFF;
-		cal[1+i*6] = (offset_tmp >> 8)     & 0xFF;
-		cal[2+i*6] = (offset_tmp >> 0)     & 0xFF;
-		cal[3+i*6] = (data->gain[i] >> 16) & 0xFF;
-		cal[4+i*6] = (data->gain[i] >> 8)  & 0xFF;
-		cal[5+i*6] = (data->gain[i] >> 0)  & 0xFF;
-	}
-
-	// Write offset and gain for both channels
-	mcp3911_write_register(REG_OFFCAL_0, length, cal);
+	save_calibration_to_eeprom(data->offset, data->gain);
+	save_calibration_to_mcp3911(data->offset, data->gain);
 	BA->com_return_setter(com, data);
 }
 
@@ -429,8 +407,8 @@ void get_adc_values(const ComType com, const GetADCValues *data) {
 
 	gadcvr.header         = data->header;
 	gadcvr.header.length  = sizeof(GetADCValuesReturn);
-	gadcvr.value[0]   = BC->raw_value[0];
-	gadcvr.value[1]   = BC->raw_value[1];
+	gadcvr.value[0]       = BC->raw_value[0];
+	gadcvr.value[1]       = BC->raw_value[1];
 
 	BA->send_blocking_with_timeout(&gadcvr, sizeof(GetADCValuesReturn), com);
 }
@@ -456,4 +434,69 @@ uint8_t spibb_transceive_byte(const uint8_t value) {
 	}
 
 	return recv;
+}
+
+// 4x int32: offset ch0, offset ch1, gain ch0, gain ch1
+void load_calibration_from_eeprom(int32_t offset[2], int32_t gain[2]) {
+	int32_t calibration[4];
+	BA->bricklet_select(BS->port - 'a');
+	BA->i2c_eeprom_master_read(BA->twid->pTwi,
+	                           CALIBRATION_EEPROM_POSITION,
+	                           (char*)calibration,
+	                           4*4);
+	BA->bricklet_deselect(BS->port - 'a');
+	offset[0] = calibration[0];
+	offset[1] = calibration[1];
+	gain[0]   = calibration[2];
+	gain[1]   = calibration[3];
+}
+
+void load_calibration_from_mcp3911(int32_t offset[2], int32_t gain[2]) {
+	const uint8_t length = 3*2*2;
+	uint8_t cal[length];
+
+	// Read offset and gain for both channels
+	mcp3911_read_register(REG_OFFCAL_0, length, cal);
+	for(uint8_t i = 0; i < NUM_SIMPLE_VALUES; i++) {
+		offset[i] = cal[2+i*6] | (cal[1+i*6] << 8) | (cal[0+i*6] << 16);
+		// 24 bit twos complement -> 32 bit twos complement
+		if(offset[i] & 0x800000) {
+			offset[i] |= 0xFF000000;
+		}
+		gain[i] = cal[5+i*6] | (cal[4+i*6] << 8) | (cal[3+i*6] << 16);
+	}
+}
+
+void save_calibration_to_eeprom(const int32_t offset[2], const int32_t gain[2]) {
+	int32_t calibration[4] = {offset[0], offset[1], gain[0], gain[1]};
+
+	BA->bricklet_select(BS->port - 'a');
+	BA->i2c_eeprom_master_write(BA->twid->pTwi,
+	                            CALIBRATION_EEPROM_POSITION,
+	                            (const char*)calibration,
+	                            4*4);
+	BA->bricklet_deselect(BS->port - 'a');
+}
+
+void save_calibration_to_mcp3911(const int32_t offset[2], const int32_t gain[2]) {
+	const uint8_t length = 3*2*2;
+	uint8_t cal[length];
+
+	for(uint8_t i = 0; i < NUM_SIMPLE_VALUES; i++) {
+		// 32 bit twos complement -> 24 bit twos complement
+		int32_t offset_tmp = offset[i];
+		if(offset_tmp & 0x80000000) {
+			offset_tmp |= 0x800000;
+		}
+
+		cal[0+i*6] = (offset_tmp >> 16) & 0xFF;
+		cal[1+i*6] = (offset_tmp >> 8)  & 0xFF;
+		cal[2+i*6] = (offset_tmp >> 0)  & 0xFF;
+		cal[3+i*6] = (gain[i] >> 16)    & 0xFF;
+		cal[4+i*6] = (gain[i] >> 8)     & 0xFF;
+		cal[5+i*6] = (gain[i] >> 0)     & 0xFF;
+	}
+
+	// Write offset and gain for both channels
+	mcp3911_write_register(REG_OFFCAL_0, length, cal);
 }
