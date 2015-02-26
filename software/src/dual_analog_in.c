@@ -74,6 +74,21 @@ void invocation(const ComType com, const uint8_t *data) {
 			break;
 		}
 
+		case FID_SET_CALIBRATION: {
+			set_calibration(com, (SetCalibration*)data);
+			break;
+		}
+
+		case FID_GET_CALIBRATION: {
+			get_calibration(com, (GetCalibration*)data);
+			break;
+		}
+
+		case FID_GET_ADC_VALUES: {
+			get_adc_values(com, (GetADCValues*)data);
+			break;
+		}
+
 		default: {
 			BA->com_return_error(data, sizeof(MessageHeader), MESSAGE_ERROR_CODE_NOT_SUPPORTED, com);
 			break;
@@ -103,17 +118,37 @@ void constructor(void) {
 	simple_constructor();
 
 	BC->sample_wait = BC->next_sample_wait;
+	BC->rate = SAMPLE_RATE_2_SPS;
+	BC->next_rate = SAMPLE_RATE_2_SPS;
+	BC->multiplier = 2;
+	BC->count_to = 122;
+	BC->counter = 0;
+	BC->sum[0] = 0;
+	BC->sum[1] = 0;
 
 	SLEEP_MS(100);
+
+	mcp3911_set_status(CONFIG_STATUS_MODOUT_CH0_OFF |
+	                   CONFIG_STATUS_HIZ_HIGHZ |
+	                   CONFIG_STATUS_MODE_CH1_PUL |
+	                   CONFIG_STATUS_MODE_CH0_PUL |
+	                   CONFIG_STATUS_STATUS_CH1_NRDY |
+	                   CONFIG_STATUS_STATUS_CH0_NRDY |
+	                   CONFIG_STATUS_READ_LOOP_TYPE |
+	                   CONFIG_STATUS_WRITE_LOOP_ALL |
+	                   CONFIG_STATUS_CH0_24BIT |
+	                   CONFIG_STATUS_CH1_24BIT |
+	                   CONFIG_STATUS_OFFCAL_EN |
+	                   CONFIG_STATUS_GAINCAL_EN);
 
 	// Set default config
 	const uint16_t config = CONFIG_CONFIG_AMCLK_1 |
 	                        CONFIG_CONFIG_OSR_4096 |
-	                        CONFIG_CONFIG_DITHER_MAX |
+	                        CONFIG_CONFIG_DITHER_OFF |
 	                        CONFIG_CONFIG_AZ_FREQ_LOW |
 	                        CONFIG_CONFIG_RESET_NONE |
 	                        CONFIG_CONFIG_SHUTDOWN_NONE |
-	                        CONFIG_CONFIG_VREFEXT_EN |
+	                        CONFIG_CONFIG_VREFINT_EN |
 	                        CONFIG_CONFIG_CLKEXT_CRYSTAL;
 	mcp3911_set_config(config);
 
@@ -125,9 +160,11 @@ void destructor(void) {
 
 void tick(const uint8_t tick_type) {
 	if(tick_type & TICK_TASK_TYPE_CALCULATION) {
-		if((BC->tick % 250) == 0) {
-			mcp3911_get_config();
-			mcp3911_read_voltage();
+		if((BC->tick % 10) == 0) {
+			const uint16_t status = mcp3911_get_status();
+			if((status & CONFIG_STATUS_STATUS_CH1_MASK) == CONFIG_STATUS_STATUS_CH1_RDY) {
+				mcp3911_read_voltage();
+			}
 		}
 	}
 
@@ -164,15 +201,103 @@ void mcp3911_read_voltage(void) {
 	uint8_t data[6];
 
 	// Read 6 bytes of data
-	mcp3911_read_register(REG_CHANNEL_0, 6, data);
+	mcp3911_read_register(REG_CHANNEL_0, 3, data);
 
-	BC->last_value[0] = BC->value[0];
-	BC->last_value[1] = BC->value[1];
-	BC->value[0] = data[0] | (data[1] << 8) | (data[2] << 16);
-	BC->value[1] = data[3] | (data[4] << 8) | (data[5] << 16);
-	BA->printf("values: %d %d\n\r", BC->value[0], BC->value[1]);
+	BC->counter++;
+	if(BC->counter >= BC->count_to) {
+		BC->counter = 0;
+	}
+
+	// CH0: 28x (TODO: Change to value of production unit)
+	// Formula (Python) with max software averaging = 244:
+	// Note: 244* 24 bit < 32 bit. Do not got over 255!
+    //
+	// def divisor(factor):
+	//  print 244/((factor*0.6*1.5)/2**23)
+    //
+	// >>> divisor(28)
+	// 81223029.8413
+
+	for(uint8_t i = 0; i < NUM_SIMPLE_VALUES; i++) {
+		BC->raw_value[i] = data[2+i*3] | (data[1+i*3] << 8) | (data[0+i*3] << 16);
+		if(BC->raw_value[i] & 0x800000) {
+			BC->raw_value[i] |= 0xFF000000;
+		}
+
+		BC->sum[i] += BC->raw_value[i];
+		if(BC->counter == 0) {
+			BC->last_value[i] = BC->value[i];
+			BC->value[i] = BC->sum[i]*BC->multiplier/81223;
+			BC->sum[i] = 0;
+		}
+	}
+
+	// If the sample rate changed, we will set it here
+	// This makes sure that we can't change the sampling rate while a measurement is taken
+	if(BC->counter == 0) {
+		if(BC->rate != BC->next_rate) {
+			use_new_sample_rate();
+		}
+	}
 }
 
+void use_new_sample_rate(void) {
+	// Set new oversampling ratio
+	uint16_t config = mcp3911_get_config();
+	config &= CONFIG_CONFIG_OSR_MASK;
+
+	switch(BC->next_rate) {
+		case SAMPLE_RATE_976_SPS:
+			config |= CONFIG_CONFIG_OSR_1024;
+			break;
+
+		case SAMPLE_RATE_488_SPS:
+			config |= CONFIG_CONFIG_OSR_2048;
+			break;
+
+		case SAMPLE_RATE_244_SPS:
+		default:
+			config |= CONFIG_CONFIG_OSR_4096;
+			break;
+	}
+
+	mcp3911_set_config(config);
+
+	// Set new sample count and multiplier
+	switch(BC->next_rate) {
+		case SAMPLE_RATE_122_SPS:
+			BC->multiplier = 122;
+			BC->count_to = 2;
+			break;
+
+		case SAMPLE_RATE_61_SPS:
+			BC->multiplier = 61;
+			BC->count_to = 4;
+			break;
+
+		case SAMPLE_RATE_4_SPS:
+			BC->multiplier = 4;
+			BC->count_to = 61;
+			break;
+
+		case SAMPLE_RATE_2_SPS:
+			BC->multiplier = 2;
+			BC->count_to = 122;
+			break;
+
+		case SAMPLE_RATE_1_SPS:
+			BC->multiplier = 1;
+			BC->count_to = 244;
+			break;
+
+		default:
+			BC->multiplier = 244;
+			BC->count_to = 1;
+			break;
+	}
+
+	BC->rate = BC->next_rate;
+}
 
 inline uint8_t mcp3911_get_gain(void) {
 	uint8_t value;
@@ -192,13 +317,13 @@ inline void mcp3911_set_gain(const uint8_t value) {
 	deselect();
 }
 
-inline uint8_t mcp3911_get_status(void) {
+inline uint16_t mcp3911_get_status(void) {
 	uint16_t value;
 
 	select();
 	spibb_transceive_byte(ADDRESS_READ | ADDRESS_REGISTER(REG_STATUS));
-	value = spibb_transceive_byte(0);
-	value |= spibb_transceive_byte(0) << 8;
+	value = spibb_transceive_byte(0) << 8;
+	value |= spibb_transceive_byte(0);
 	deselect();
 
 	return value;
@@ -207,18 +332,18 @@ inline uint8_t mcp3911_get_status(void) {
 inline void mcp3911_set_status(const uint16_t value) {
 	select();
 	spibb_transceive_byte(ADDRESS_WRITE | ADDRESS_REGISTER(REG_STATUS));
-	spibb_transceive_byte((uint8_t)value);
 	spibb_transceive_byte((uint8_t)(value >> 8));
+	spibb_transceive_byte((uint8_t)value);
 	deselect();
 }
 
-inline uint8_t mcp3911_get_config(void) {
+inline uint16_t mcp3911_get_config(void) {
 	uint16_t value;
 
 	select();
 	spibb_transceive_byte(ADDRESS_READ | ADDRESS_REGISTER(REG_CONFIG));
-	value = spibb_transceive_byte(0);
-	value |= spibb_transceive_byte(0) << 8;
+	value = spibb_transceive_byte(0) << 8;
+	value |= spibb_transceive_byte(0);
 	deselect();
 
 	return value;
@@ -237,20 +362,77 @@ void get_sample_rate(const ComType com, const GetSampleRate *data) {
 
 	gsrr.header         = data->header;
 	gsrr.header.length  = sizeof(GetSampleRateReturn);
-	gsrr.rate           = BC->current_rate;
+	gsrr.rate           = BC->rate;
 
 	BA->send_blocking_with_timeout(&gsrr, sizeof(GetSampleRateReturn), com);
 }
 
 void set_sample_rate(const ComType com, const SetSampleRate *data) {
-	if(data->rate > 0 /* TODO */ ||
-	   data->rate < 2 /* TODO */) {
+	if(data->rate > SAMPLE_RATE_1_SPS ||
+	   data->rate < SAMPLE_RATE_976_SPS) {
 		BA->com_return_error(data, sizeof(MessageHeader), MESSAGE_ERROR_CODE_INVALID_PARAMETER, com);
 		return;
 	}
 
 	BC->next_rate = data->rate;
 	BA->com_return_setter(com, data);
+}
+
+void get_calibration(const ComType com, const GetCalibration *data) {
+	const uint8_t length = 3*2*2;
+	uint8_t cal[length];
+
+	// Read offset and gain for both channels
+	mcp3911_read_register(REG_OFFCAL_0, length, cal);
+	GetCalibrationReturn gcr;
+
+	gcr.header         = data->header;
+	gcr.header.length  = sizeof(GetCalibrationReturn);
+	for(uint8_t i = 0; i < NUM_SIMPLE_VALUES; i++) {
+		gcr.offset[i] = cal[2+i*6] | (cal[1+i*6] << 8) | (cal[0+i*6] << 16);
+		// 24 bit twos complement -> 32 bit twos complement
+		if(gcr.offset[i] & 0x800000) {
+			gcr.offset[i] |= 0xFF000000;
+		}
+		gcr.gain[i]   = cal[5+i*6] | (cal[4+i*6] << 8) | (cal[3+i*6] << 16);
+	}
+
+	BA->send_blocking_with_timeout(&gcr, sizeof(GetCalibrationReturn), com);
+}
+
+void set_calibration(const ComType com, const SetCalibration *data) {
+	const uint8_t length = 3*2*2;
+	uint8_t cal[length];
+
+	for(uint8_t i = 0; i < NUM_SIMPLE_VALUES; i++) {
+		// 32 bit twos complement -> 24 bit twos complement
+		int32_t offset_tmp = data->offset[i];
+		if(offset_tmp & 0x80000000) {
+			offset_tmp |= 0x800000;
+		}
+
+		cal[0+i*6] = (offset_tmp >> 16)    & 0xFF;
+		cal[1+i*6] = (offset_tmp >> 8)     & 0xFF;
+		cal[2+i*6] = (offset_tmp >> 0)     & 0xFF;
+		cal[3+i*6] = (data->gain[i] >> 16) & 0xFF;
+		cal[4+i*6] = (data->gain[i] >> 8)  & 0xFF;
+		cal[5+i*6] = (data->gain[i] >> 0)  & 0xFF;
+	}
+
+	// Write offset and gain for both channels
+	mcp3911_write_register(REG_OFFCAL_0, length, cal);
+	BA->com_return_setter(com, data);
+}
+
+void get_adc_values(const ComType com, const GetADCValues *data) {
+	GetADCValuesReturn gadcvr;
+
+	gadcvr.header         = data->header;
+	gadcvr.header.length  = sizeof(GetADCValuesReturn);
+	gadcvr.value[0]   = BC->raw_value[0];
+	gadcvr.value[1]   = BC->raw_value[1];
+
+	BA->send_blocking_with_timeout(&gadcvr, sizeof(GetADCValuesReturn), com);
 }
 
 uint8_t spibb_transceive_byte(const uint8_t value) {

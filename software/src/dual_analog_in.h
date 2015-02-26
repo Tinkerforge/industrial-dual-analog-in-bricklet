@@ -26,6 +26,14 @@
 
 #include "bricklib/com/com_common.h"
 
+#define SAMPLE_RATE_976_SPS 0
+#define SAMPLE_RATE_488_SPS 1
+#define SAMPLE_RATE_244_SPS 2
+#define SAMPLE_RATE_122_SPS 3
+#define SAMPLE_RATE_61_SPS  4
+#define SAMPLE_RATE_4_SPS   5
+#define SAMPLE_RATE_2_SPS   6
+#define SAMPLE_RATE_1_SPS   7
 
 #define ADDRESS_READ           1
 #define ADDRESS_WRITE          0
@@ -139,9 +147,9 @@
 #define CONFIG_CONFIG_SHUTDOWN_CH1    0b0000000000100000
 #define CONFIG_CONFIG_SHUTDOWN_CH0    0b0000000000010000
 #define CONFIG_CONFIG_SHUTDOWN_NONE   0b0000000000000000 // default
-#define CONFIG_CONFIG_VREFEXT_MASK    0b0000000000000100
-#define CONFIG_CONFIG_VREFEXT_DIS     0b0000000000000100 // default
-#define CONFIG_CONFIG_VREFEXT_EN      0b0000000000000000
+#define CONFIG_CONFIG_VREFINT_MASK    0b0000000000000100
+#define CONFIG_CONFIG_VREFINT_DIS     0b0000000000000100 // default
+#define CONFIG_CONFIG_VREFINT_EN      0b0000000000000000
 #define CONFIG_CONFIG_CLKEXT_MASK     0b0000000000000010
 #define CONFIG_CONFIG_CLKEXT_MCU      0b0000000000000010 // default
 #define CONFIG_CONFIG_CLKEXT_CRYSTAL  0b0000000000000000
@@ -156,8 +164,11 @@
 #define FID_GET_DEBOUNCE_PERIOD 7
 #define FID_SET_SAMPLE_RATE 8
 #define FID_GET_SAMPLE_RATE 9
-#define FID_VOLTAGE 10
-#define FID_VOLTAGE_REACHED 11
+#define FID_SET_CALIBRATION 10
+#define FID_GET_CALIBRATION 11
+#define FID_GET_ADC_VALUES 12
+#define FID_VOLTAGE 13
+#define FID_VOLTAGE_REACHED 14
 
 typedef struct {
 	MessageHeader header;
@@ -173,19 +184,48 @@ typedef struct {
 	uint8_t rate;
 } __attribute__((__packed__)) SetSampleRate;
 
+typedef struct {
+	MessageHeader header;
+} __attribute__((__packed__)) GetCalibration;
+
+typedef struct {
+	MessageHeader header;
+	int32_t offset[2];
+	int32_t gain[2];
+} __attribute__((__packed__)) GetCalibrationReturn;
+
+typedef struct {
+	MessageHeader header;
+	int32_t offset[2];
+	int32_t gain[2];
+} __attribute__((__packed__)) SetCalibration;
+
+typedef struct {
+	MessageHeader header;
+} __attribute__((__packed__)) GetADCValues;
+
+typedef struct {
+	MessageHeader header;
+	int32_t value[2];
+} __attribute__((__packed__)) GetADCValuesReturn;
+
 void mcp3911_read_register(const uint8_t reg, const uint8_t length, uint8_t *data);
 void mcp3911_write_register(const uint8_t reg, const uint8_t length, const uint8_t *data);
 void mcp3911_read_voltage(void);
 inline uint8_t mcp3911_get_gain(void);
 inline void mcp3911_set_gain(const uint8_t value);
-inline uint8_t mcp3911_get_status(void);
+inline uint16_t mcp3911_get_status(void);
 inline void mcp3911_set_status(const uint16_t value);
-inline uint8_t mcp3911_get_config(void);
+inline uint16_t mcp3911_get_config(void);
 inline void mcp3911_set_config(const uint16_t value);
 uint8_t spibb_transceive_byte(const uint8_t value);
+void use_new_sample_rate(void);
 
 void get_sample_rate(const ComType com, const GetSampleRate *data);
 void set_sample_rate(const ComType com, const SetSampleRate *data);
+void get_calibration(const ComType com, const GetCalibration *data);
+void set_calibration(const ComType com, const SetCalibration *data);
+void get_adc_values(const ComType com, const GetADCValues *data);
 
 void invocation(const ComType com, const uint8_t *data);
 void constructor(void);

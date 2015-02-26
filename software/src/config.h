@@ -78,10 +78,14 @@ typedef struct {
 	uint8_t next_sample_wait;
 	uint8_t sample_wait;
 
-	uint8_t current_channel;
-	uint8_t current_rate;
+	uint8_t rate;
 	uint8_t next_rate;
+	uint8_t count_to;
+	uint8_t multiplier;
 
+	uint32_t counter;
+	int32_t sum[NUM_SIMPLE_VALUES];
+	int32_t raw_value[NUM_SIMPLE_VALUES];
 } BrickContext;
 
 #endif
