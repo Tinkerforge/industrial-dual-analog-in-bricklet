@@ -167,12 +167,10 @@ void destructor(void) {
 
 void tick(const uint8_t tick_type) {
 	if(tick_type & TICK_TASK_TYPE_CALCULATION) {
-		if((BC->tick % 5) == 0) { // max 244 samples/sec
-			const uint16_t status = mcp3911_get_status();
-			if(((status & CONFIG_STATUS_STATUS_CH0_MASK) == CONFIG_STATUS_STATUS_CH0_RDY) ||
-			   ((status & CONFIG_STATUS_STATUS_CH1_MASK) == CONFIG_STATUS_STATUS_CH1_RDY)) {
-				mcp3911_read_voltage();
-			}
+		const uint16_t status = mcp3911_get_status();
+		if(((status & CONFIG_STATUS_STATUS_CH0_MASK) == CONFIG_STATUS_STATUS_CH0_RDY) ||
+		   ((status & CONFIG_STATUS_STATUS_CH1_MASK) == CONFIG_STATUS_STATUS_CH1_RDY)) {
+			mcp3911_read_voltage();
 		}
 	}
 
