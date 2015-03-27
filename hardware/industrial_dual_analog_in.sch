@@ -30,6 +30,7 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
+LIBS:industrial_dual_analog_in-cache
 EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
@@ -828,7 +829,7 @@ F 3 "" H 6250 6600 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 Text Notes 10000 1550 0    60   ~ 0
-max +-30V
+max +-35V
 $Comp
 L C C1
 U 1 1 53281CCC
@@ -1295,8 +1296,8 @@ Text Notes 8000 5400 0    60   ~ 0
 Ua = U_-*(R14+R8)/R14*R10/(R15+R10)-U_+*R8/R14
 Text Notes 8000 5550 0    60   ~ 0
 R14=R15 und R8=R10 -> Ua = R8/R14*(U_+ - U_-)
-Text Notes 8050 4500 0    60   ~ 0
-Aktueller Range +-35.74V (0.6V), +-53.62V (0.9V)\nRange
+Text Notes 8000 5150 0    60   ~ 0
+Range +-35.74V (0.6V), +-53.62V (0.9V)
 Wire Wire Line
 	1050 2500 1050 2450
 Connection ~ 2750 1100
@@ -1716,6 +1717,4 @@ Wire Wire Line
 	3650 5500 3650 5450
 Text Notes 5600 2950 0    60   ~ 0
 Aktuell nicht 10ppm bestückt
-Text Notes 8650 4800 0    60   ~ 0
-Alternativ 10.8V max input -> 0.6V\n-> 180k/10k
 $EndSCHEMATC
