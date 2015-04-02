@@ -1700,8 +1700,6 @@ Wire Wire Line
 	3650 6550 3650 6000
 Wire Wire Line
 	3650 5500 3650 5450
-Text Notes 5600 2950 0    60   ~ 0
-Aktuell nicht 10ppm bestückt
 Wire Wire Line
 	10050 2550 10050 3250
 Wire Wire Line
