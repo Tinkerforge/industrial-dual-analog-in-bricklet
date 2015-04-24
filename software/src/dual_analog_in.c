@@ -456,12 +456,12 @@ void load_calibration_from_mcp3911(int32_t offset[2], int32_t gain[2]) {
 	// Read offset and gain for both channels
 	mcp3911_read_register(REG_OFFCAL_0, length, cal);
 	for(uint8_t i = 0; i < NUM_SIMPLE_VALUES; i++) {
-		offset[i] = cal[2+i*6] | (cal[1+i*6] << 8) | (cal[0+i*6] << 16);
+		offset[1-i] = cal[2+i*6] | (cal[1+i*6] << 8) | (cal[0+i*6] << 16);
 		// 24 bit twos complement -> 32 bit twos complement
-		if(offset[i] & 0x800000) {
-			offset[i] |= 0xFF000000;
+		if(offset[1-i] & 0x800000) {
+			offset[1-i] |= 0xFF000000;
 		}
-		gain[i] = cal[5+i*6] | (cal[4+i*6] << 8) | (cal[3+i*6] << 16);
+		gain[1-i] = cal[5+i*6] | (cal[4+i*6] << 8) | (cal[3+i*6] << 16);
 	}
 }
 
@@ -482,7 +482,7 @@ void save_calibration_to_mcp3911(const int32_t offset[2], const int32_t gain[2])
 
 	for(uint8_t i = 0; i < NUM_SIMPLE_VALUES; i++) {
 		// 32 bit twos complement -> 24 bit twos complement
-		int32_t offset_tmp = offset[i];
+		int32_t offset_tmp = offset[1-i];
 		if(offset_tmp & 0x80000000) {
 			offset_tmp |= 0x800000;
 		}
@@ -490,9 +490,9 @@ void save_calibration_to_mcp3911(const int32_t offset[2], const int32_t gain[2])
 		cal[0+i*6] = (offset_tmp >> 16) & 0xFF;
 		cal[1+i*6] = (offset_tmp >> 8)  & 0xFF;
 		cal[2+i*6] = (offset_tmp >> 0)  & 0xFF;
-		cal[3+i*6] = (gain[i] >> 16)    & 0xFF;
-		cal[4+i*6] = (gain[i] >> 8)     & 0xFF;
-		cal[5+i*6] = (gain[i] >> 0)     & 0xFF;
+		cal[3+i*6] = (gain[1-i] >> 16)  & 0xFF;
+		cal[4+i*6] = (gain[1-i] >> 8)   & 0xFF;
+		cal[5+i*6] = (gain[1-i] >> 0)   & 0xFF;
 	}
 
 	// Write offset and gain for both channels
