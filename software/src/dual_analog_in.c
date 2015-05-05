@@ -232,7 +232,6 @@ void mcp3911_read_voltage(void) {
 
 		BC->sum[i] += BC->raw_value[i];
 		if(BC->counter == 0) {
-			BC->last_value[i] = BC->value[i];
 			BC->value[i] = BC->sum[i]*BC->multiplier/38175;
 			BC->sum[i] = 0;
 		}
