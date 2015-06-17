@@ -221,8 +221,8 @@ void mcp3911_read_voltage(void) {
 	// def divisor(factor):
 	//  print 244/((factor*0.6*1.5)/2**23)
     //
-	// >>> divisor(280/4.7)
-	// 38175...
+	// >>> divisor(277/4.7)
+	// 38588...
 
 	for(uint8_t i = 0; i < NUM_SIMPLE_VALUES; i++) {
 		BC->raw_value[i] = data[2 + 3 - i*3] | (data[1 + 3 - i*3] << 8) | (data[0 + 3 - i*3] << 16);
@@ -232,7 +232,7 @@ void mcp3911_read_voltage(void) {
 
 		BC->sum[i] += BC->raw_value[i];
 		if(BC->counter == 0) {
-			BC->value[i] = BC->sum[i]*BC->multiplier/38175;
+			BC->value[i] = BC->sum[i]*BC->multiplier/38588;
 			BC->sum[i] = 0;
 		}
 	}
