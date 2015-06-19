@@ -5,7 +5,7 @@ function matlab_example_callback()
     HOST = 'localhost';
     PORT = 4223;
     UID = 'ftn'; % Change to your UID
-    
+
     ipcon = IPConnection(); % Create IP connection
     iain = BrickletIndustrialDualAnalogIn(UID, ipcon); % Create device object
 
@@ -13,7 +13,7 @@ function matlab_example_callback()
     % Don't use device before ipcon is connected
 
     % Set Period (channel 1) for voltage callback to 1s (1000ms)
-    % Note: The callback is only called every second if the 
+    % Note: The callback is only called every second if the
     %       voltage has changed since the last call!
     iain.setVoltageCallbackPeriod(1, 1000);
 

@@ -12,7 +12,8 @@ type
     ipcon: TIPConnection;
     iain: TBrickletIndustrialDualAnalogIn;
   public
-    procedure VoltageCB(sender: TBrickletIndustrialDualAnalogIn; const channel: byte; const voltage: longint);
+    procedure VoltageCB(sender: TBrickletIndustrialDualAnalogIn;
+                        const channel: byte; const voltage: longint);
     procedure Execute;
   end;
 
@@ -25,7 +26,8 @@ var
   e: TExample;
 
 { Callback function for voltage callback (parameter has unit mV) }
-procedure TExample.VoltageCB(sender: TBrickletIndustrialDualAnalogIn; const channel: byte; const voltage: longint);
+procedure TExample.VoltageCB(sender: TBrickletIndustrialDualAnalogIn;
+                             const channel: byte; const voltage: longint);
 begin
   WriteLn(Format('Voltage (channel %d): %f V', [channel, voltage/1000.0]));
 end;

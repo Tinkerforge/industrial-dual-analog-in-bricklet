@@ -35,9 +35,9 @@ int main() {
 
 	// Register threshold reached callback to function cb_reached
 	industrial_dual_analog_in_register_callback(&iain,
-	                                          INDUSTRIAL_DUAL_ANALOG_IN_CALLBACK_VOLTAGE_REACHED,
-	                                          (void *)cb_reached,
-	                                          NULL);
+	                                            INDUSTRIAL_DUAL_ANALOG_IN_CALLBACK_VOLTAGE_REACHED,
+	                                            (void *)cb_reached,
+	                                            NULL);
 
 	// Configure threshold (channel 1) for "greater than 5V" (unit is mV)
 	industrial_dual_analog_in_set_voltage_callback_threshold(&iain, 1, '>', 5*1000, 0);

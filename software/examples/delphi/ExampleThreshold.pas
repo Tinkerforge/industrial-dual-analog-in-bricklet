@@ -12,7 +12,8 @@ type
     ipcon: TIPConnection;
     iain: TBrickletIndustrialDualAnalogIn;
   public
-    procedure ReachedCB(sender: TBrickletIndustrialDualAnalogIn; const channel: byte; const voltage: longint);
+    procedure ReachedCB(sender: TBrickletIndustrialDualAnalogIn;
+                        const channel: byte; const voltage: longint);
     procedure Execute;
   end;
 
@@ -25,9 +26,11 @@ var
   e: TExample;
 
 { Callback for voltage greater than 5V }
-procedure TExample.ReachedCB(sender: TBrickletIndustrialDualAnalogIn; const channel: byte; const voltage: longint);
+procedure TExample.ReachedCB(sender: TBrickletIndustrialDualAnalogIn;
+                             const channel: byte; const voltage: longint);
 begin
-  WriteLn(Format('Voltage (channel %d) is greater than 5V: %f V', [channel, voltage/1000.0]));
+  WriteLn(Format('Voltage (channel %d) is greater than 5V: %f V',
+                 [channel, voltage/1000.0]));
 end;
 
 procedure TExample.Execute;

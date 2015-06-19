@@ -1,0 +1,31 @@
+Needs["NETLink`"]
+LoadNETAssembly["Tinkerforge",NotebookDirectory[]<>"../../.."]
+
+host="localhost"
+port=4223
+uid="amb"(* Change to your UID *)
+
+(* Create IPConnection and device object *)
+ipcon=NETNew["Tinkerforge.IPConnection"]
+dai=NETNew["Tinkerforge.BrickletIndustrialDualAnalogIn",uid,ipcon]
+ipcon@Connect[host,port]
+
+(* Get threshold callbacks with a debounce time of 1 second (1000ms) *)
+dai@SetDebouncePeriod[1000]
+
+(* Callback for voltage greater than 5V *)
+VoltageReachedCB[sender_,channel_,voltage_]:=
+ Print["Voltage (channel "<>ToString[channel]<>") is greater than 5V: "<>
+       ToString[N[Quantity[voltage,"mV"]]]]
+AddEventHandler[dai@VoltageReached,VoltageReachedCB]
+
+(* Configure threshold (channel 1) for "greater than 5V" (unit is mV) *)
+option=Tinkerforge`BrickletIndustrialDualAnalogIn`THRESHOLDUOPTIONUGREATER
+dai@SetVoltageCallbackThreshold[1,option,5*1000,0]
+
+Input["Click OK to exit"]
+
+(* Clean up *)
+ipcon@Disconnect[]
+ReleaseNETObject[dai]
+ReleaseNETObject[ipcon]

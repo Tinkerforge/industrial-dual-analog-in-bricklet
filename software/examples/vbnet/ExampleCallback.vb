@@ -6,13 +6,16 @@ Module ExampleCallback
     Const UID As String = "XYZ" ' Change to your UID
 
     ' Callback function for voltage callback (parameter has unit mV)
-    Sub VoltageCB(ByVal sender As BrickletIndustrialDualAnalogIn, ByVal channel As Byte, ByVal voltage As Integer)
-        System.Console.WriteLine("Voltage (channel" + channel.ToString() + "): " + (voltage/1000.0).ToString() + " V")
+    Sub VoltageCB(ByVal sender As BrickletIndustrialDualAnalogIn, _
+                  ByVal channel As Byte, ByVal voltage As Integer)
+        System.Console.WriteLine("Voltage (channel" + channel.ToString() + _
+                                 "): " + (voltage/1000.0).ToString() + " V")
     End Sub
 
     Sub Main()
         Dim ipcon As New IPConnection() ' Create IP connection
-        Dim industrial_dual_analog_in As New BrickletIndustrialDualAnalogIn(UID, ipcon) ' Create device object
+        Dim industrial_dual_analog_in As _
+          New BrickletIndustrialDualAnalogIn(UID, ipcon) ' Create device object
 
         ipcon.Connect(HOST, PORT) ' Connect to brickd
         ' Don't use device before ipcon is connected
