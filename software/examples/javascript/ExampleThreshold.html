@@ -51,8 +51,7 @@
                 iain.on(Tinkerforge.BrickletIndustrialDualAnalogIn.CALLBACK_VOLTAGE_REACHED,
                     // Callback for voltage greater than 10mA
                     function(channel, voltage) {
-                        textArea.value += 'Voltage (channel '+channel+') is greater than 5V: '+voltage/1000+' V';
-                        textArea.value += '\n';
+                        textArea.value += 'Voltage (channel '+channel+') is greater than 5V: '+voltage/1000+' V\n';
                         textArea.scrollTop = textArea.scrollHeight;
                     }
                 );

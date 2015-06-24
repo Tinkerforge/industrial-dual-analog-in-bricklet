@@ -51,8 +51,7 @@
                 iain.on(Tinkerforge.BrickletIndustrialDualAnalogIn.CALLBACK_VOLTAGE,
                     // Callback function for voltage callback (parameter has unit V)
                     function(channel, voltage) {
-                        textArea.value += 'Voltage (channel '+channel+'): '+voltage/1000+' V';
-                        textArea.value += '\n';
+                        textArea.value += 'Voltage (channel '+channel+'): '+voltage/1000+' V\n';
                         textArea.scrollTop = textArea.scrollHeight;
                     }
                 );
