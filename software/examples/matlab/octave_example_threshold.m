@@ -3,7 +3,7 @@ function octave_example_threshold()
 
     HOST = "localhost";
     PORT = 4223;
-    UID = "ftn"; % Change to your UID
+    UID = "XYZ"; % Change to your UID
 
     ipcon = java_new("com.tinkerforge.IPConnection"); % Create IP connection
     iain = java_new("com.tinkerforge.BrickletIndustrialDualAnalogIn", UID, ipcon); % Create device object
@@ -26,5 +26,13 @@ end
 
 % Callback function for voltage callback (parameter has unit mV)
 function cb_reached(e)
-    fprintf("Voltage [channel %s]: %g V\n", e.channel.toString(), e.voltage/1000);
+    fprintf("Voltage [channel %d]: %g V\n", short2int(e.channel), e.voltage/1000);
+end
+
+function int = short2int(short)
+    if compare_versions(version(), "3.8", "<=")
+        int = short.intValue();
+    else
+        int = short;
+    end
 end
