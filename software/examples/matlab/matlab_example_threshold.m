@@ -1,10 +1,10 @@
-function matlab_example_callback()
+function matlab_example_threshold()
     import com.tinkerforge.IPConnection;
     import com.tinkerforge.BrickletIndustrialDualAnalogIn;
 
     HOST = 'localhost';
     PORT = 4223;
-    UID = 'ftn'; % Change to your UID
+    UID = 'XYZ'; % Change to your UID
 
     ipcon = IPConnection(); % Create IP connection
     iain = BrickletIndustrialDualAnalogIn(UID, ipcon); % Create device object
