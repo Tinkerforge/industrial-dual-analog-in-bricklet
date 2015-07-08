@@ -4,7 +4,7 @@ function matlab_example_simple()
 
     HOST = 'localhost';
     PORT = 4223;
-    UID = 'ftn'; % Change to your UID
+    UID = 'XYZ'; % Change to your UID
 
     ipcon = IPConnection(); % Create IP connection
     iain = BrickletIndustrialDualAnalogIn(UID, ipcon); % Create device object
@@ -14,7 +14,7 @@ function matlab_example_simple()
 
     % Get current voltage for channel 1 (unit is mV)
     voltage = iain.getVoltage(1);
-    fprintf('Voltage: %g V', voltage/1000);
+    fprintf('Voltage: %g V\n', voltage/1000);
 
     input('Press any key to exit...\n', 's');
     ipcon.disconnect();
