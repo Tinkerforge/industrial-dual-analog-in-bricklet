@@ -13,7 +13,7 @@ class Example
 		                         voltage/1000.0 + " V");
 	}
 
-	static void Main() 
+	static void Main()
 	{
 		IPConnection ipcon = new IPConnection(); // Create IP connection
 		BrickletIndustrialDualAnalogIn iain =
