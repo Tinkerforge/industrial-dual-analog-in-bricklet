@@ -10,14 +10,14 @@ from tinkerforge.bricklet_industrial_dual_analog_in import IndustrialDualAnalogI
 
 if __name__ == "__main__":
     ipcon = IPConnection() # Create IP connection
-    iain = IndustrialDualAnalogIn(UID, ipcon) # Create device object
+    idai = IndustrialDualAnalogIn(UID, ipcon) # Create device object
 
     ipcon.connect(HOST, PORT) # Connect to brickd
     # Don't use device before ipcon is connected
 
-    # Get current voltage for channel 1 (unit is mV)
-    voltage = iain.get_voltage(1)
-    print('Voltage: ' + str(voltage/1000.0) + ' V')
+    # Get current voltage from channel 1 (unit is mV)
+    voltage = idai.get_voltage(1)
+    print('Voltage (Channel 1): ' + str(voltage/1000.0) + ' V')
 
     raw_input('Press key to exit\n') # Use input() in Python 3
     ipcon.disconnect()

@@ -10,22 +10,22 @@ public class ExampleThreshold {
 	//       might normally want to catch are described in the documentation
 	public static void main(String args[]) throws Exception {
 		IPConnection ipcon = new IPConnection(); // Create IP connection
-		BrickletIndustrialDualAnalogIn iain =
+		BrickletIndustrialDualAnalogIn idai =
 		  new BrickletIndustrialDualAnalogIn(UID, ipcon); // Create device object
 
 		ipcon.connect(HOST, PORT); // Connect to brickd
 		// Don't use device before ipcon is connected
 
 		// Get threshold callbacks with a debounce time of 10 seconds (10000ms)
-		iain.setDebouncePeriod(10000);
+		idai.setDebouncePeriod(10000);
 
 		// Configure threshold (channel 1) for "greater than 5V" (unit is mV)
-		iain.setVoltageCallbackThreshold((short)1, '>', 5*1000, 0);
+		idai.setVoltageCallbackThreshold((short)1, '>', 5*1000, 0);
 
 		// Add and implement voltage reached listener (called if voltage is greater than 5V)
-		iain.addVoltageReachedListener(new BrickletIndustrialDualAnalogIn.VoltageReachedListener() {
+		idai.addVoltageReachedListener(new BrickletIndustrialDualAnalogIn.VoltageReachedListener() {
 			public void voltageReached(short channel, int voltage) {
-				System.out.println("Voltage (channel " + channel + ") is greater than 5V: " +
+				System.out.println("Voltage (Channel " + channel + ") is greater than 5V: " +
 				                   voltage/1000.0);
 			}
 		});

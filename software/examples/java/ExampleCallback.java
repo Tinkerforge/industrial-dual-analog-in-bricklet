@@ -10,7 +10,7 @@ public class ExampleCallback {
 	//       might normally want to catch are described in the documentation
 	public static void main(String args[]) throws Exception {
 		IPConnection ipcon = new IPConnection(); // Create IP connection
-		BrickletIndustrialDualAnalogIn iain =
+		BrickletIndustrialDualAnalogIn idai =
 		  new BrickletIndustrialDualAnalogIn(UID, ipcon); // Create device object
 
 		ipcon.connect(HOST, PORT); // Connect to brickd
@@ -19,12 +19,12 @@ public class ExampleCallback {
 		// Set Period (channel 1) for voltage callback to 1s (1000ms)
 		// Note: The voltage callback is only called every second if the 
 		//       voltage has changed since the last call!
-		iain.setVoltageCallbackPeriod((short)1, 1000);
+		idai.setVoltageCallbackPeriod((short)1, 1000);
 
 		// Add and implement voltage listener (called if voltage changes)
-		iain.addVoltageListener(new BrickletIndustrialDualAnalogIn.VoltageListener() {
+		idai.addVoltageListener(new BrickletIndustrialDualAnalogIn.VoltageListener() {
 			public void voltage(short channel, int voltage) {
-				System.out.println("Voltage (channel " + channel + "): " +
+				System.out.println("Voltage (Channel " + channel + "): " +
 				                   voltage/1000.0 + " V");
 			}
 		});

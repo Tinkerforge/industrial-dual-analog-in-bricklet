@@ -10,23 +10,23 @@ from tinkerforge.bricklet_industrial_dual_analog_in import IndustrialDualAnalogI
 
 # Callback for voltage greater than 5V
 def cb_reached(channel, voltage):
-    print('Voltage (channel' + str(channel) + ') is greater than 5V: ' + str(voltage/1000.0))
+    print('Voltage (Channel' + str(channel) + ') is greater than 5V: ' + str(voltage/1000.0))
 
 if __name__ == "__main__":
     ipcon = IPConnection() # Create IP connection
-    iain = IndustrialDualAnalogIn(UID, ipcon) # Create device object
+    idai = IndustrialDualAnalogIn(UID, ipcon) # Create device object
 
     ipcon.connect(HOST, PORT) # Connect to brickd
     # Don't use device before ipcon is connected
 
     # Get threshold callbacks with a debounce time of 10 seconds (10000ms)
-    iain.set_debounce_period(10000)
+    idai.set_debounce_period(10000)
 
     # Register threshold reached callback to function cb_reached
-    iain.register_callback(iain.CALLBACK_VOLTAGE_REACHED, cb_reached)
+    idai.register_callback(idai.CALLBACK_VOLTAGE_REACHED, cb_reached)
 
     # Configure threshold (channel 1) for "greater than 5V" (unit is mV)
-    iain.set_voltage_callback_threshold(1, '>', 5*1000, 0)
+    idai.set_voltage_callback_threshold(1, '>', 5*1000, 0)
 
     raw_input('Press key to exit\n') # Use input() in Python 3
     ipcon.disconnect()
