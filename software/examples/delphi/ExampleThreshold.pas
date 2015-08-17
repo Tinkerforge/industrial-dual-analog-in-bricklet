@@ -10,7 +10,7 @@ type
   TExample = class
   private
     ipcon: TIPConnection;
-    iain: TBrickletIndustrialDualAnalogIn;
+    idai: TBrickletIndustrialDualAnalogIn;
   public
     procedure ReachedCB(sender: TBrickletIndustrialDualAnalogIn;
                         const channel: byte; const voltage: longint);
@@ -39,24 +39,24 @@ begin
   ipcon := TIPConnection.Create;
 
   { Create device object }
-  iain := TBrickletIndustrialDualAnalogIn.Create(UID, ipcon);
+  idai := TBrickletIndustrialDualAnalogIn.Create(UID, ipcon);
 
   { Connect to brickd }
   ipcon.Connect(HOST, PORT);
   { Don't use device before ipcon is connected }
 
   { Get threshold callbacks with a debounce time of 10 seconds (10000ms) }
-  iain.SetDebouncePeriod(10000);
+  idai.SetDebouncePeriod(10000);
 
   { Register threshold reached callback to procedure ReachedCB }
-  iain.OnVoltageReached := {$ifdef FPC}@{$endif}ReachedCB;
+  idai.OnVoltageReached := {$ifdef FPC}@{$endif}ReachedCB;
 
   { Configure threshold (channel 1) for "greater than 5V" (unit is mV) }
-  iain.SetVoltageCallbackThreshold(1, '>', 5*1000, 0);
+  idai.SetVoltageCallbackThreshold(1, '>', 5*1000, 0);
 
   WriteLn('Press key to exit');
   ReadLn;
-  ipcon.Destroy;
+  ipcon.Destroy; { Calls ipcon.Disconnect internally }
 end;
 
 begin

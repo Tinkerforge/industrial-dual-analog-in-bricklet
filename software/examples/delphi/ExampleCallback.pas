@@ -10,7 +10,7 @@ type
   TExample = class
   private
     ipcon: TIPConnection;
-    iain: TBrickletIndustrialDualAnalogIn;
+    idai: TBrickletIndustrialDualAnalogIn;
   public
     procedure VoltageCB(sender: TBrickletIndustrialDualAnalogIn;
                         const channel: byte; const voltage: longint);
@@ -38,7 +38,7 @@ begin
   ipcon := TIPConnection.Create;
 
   { Create device object }
-  iain := TBrickletIndustrialDualAnalogIn.Create(UID, ipcon);
+  idai := TBrickletIndustrialDualAnalogIn.Create(UID, ipcon);
 
   { Connect to brickd }
   ipcon.Connect(HOST, PORT);
@@ -47,14 +47,14 @@ begin
   { Set Period (channel 1) for voltage callback to 1s (1000ms)
     Note: The voltage callback is only called every second if the
           voltage has changed since the last call! }
-  iain.SetVoltageCallbackPeriod(1, 1000);
+  idai.SetVoltageCallbackPeriod(1, 1000);
 
   { Register voltage callback to procedure VoltageCB }
-  iain.OnVoltage := {$ifdef FPC}@{$endif}VoltageCB;
+  idai.OnVoltage := {$ifdef FPC}@{$endif}VoltageCB;
 
   WriteLn('Press key to exit');
   ReadLn;
-  ipcon.Destroy;
+  ipcon.Destroy; { Calls ipcon.Disconnect internally }
 end;
 
 begin

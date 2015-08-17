@@ -10,7 +10,7 @@ type
   TExample = class
   private
     ipcon: TIPConnection;
-    iain: TBrickletIndustrialDualAnalogIn;
+    idai: TBrickletIndustrialDualAnalogIn;
   public
     procedure Execute;
   end;
@@ -30,19 +30,19 @@ begin
   ipcon := TIPConnection.Create;
 
   { Create device object }
-  iain := TBrickletIndustrialDualAnalogIn.Create(UID, ipcon);
+  idai := TBrickletIndustrialDualAnalogIn.Create(UID, ipcon);
 
   { Connect to brickd }
   ipcon.Connect(HOST, PORT);
   { Don't use device before ipcon is connected }
 
   { Get current voltage from channel 1 (unit is mV) }
-  voltage := iain.GetVoltage(1);
-  WriteLn(Format('Voltage: %f V', [voltage/1000.0]));
+  voltage := idai.GetVoltage(1);
+  WriteLn(Format('Voltage (Channel 1): %f V', [voltage/1000.0]));
 
   WriteLn('Press key to exit');
   ReadLn;
-  ipcon.Destroy;
+  ipcon.Destroy; { Calls ipcon.Disconnect internally }
 end;
 
 begin
