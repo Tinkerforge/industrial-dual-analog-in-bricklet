@@ -15,20 +15,19 @@ Module ExampleThreshold
 
     Sub Main()
         Dim ipcon As New IPConnection() ' Create IP connection
-        Dim industrial_dual_analog_in As _
-          New BrickletIndustrialDualAnalogIn(UID, ipcon) ' Create device object
+        Dim idai As New BrickletIndustrialDualAnalogIn(UID, ipcon) ' Create device object
 
         ipcon.Connect(HOST, PORT) ' Connect to brickd
         ' Don't use device before ipcon is connected
 
         ' Get threshold callbacks with a debounce time of 1 seconds (1000ms)
-        industrial_dual_analog_in.SetDebouncePeriod(1000)
+        idai.SetDebouncePeriod(1000)
 
         ' Register threshold reached callback to function ReachedCB
-        AddHandler industrial_dual_analog_in.VoltageReached, AddressOf ReachedCB
+        AddHandler idai.VoltageReached, AddressOf ReachedCB
 
         ' Configure threshold (channel 1) for "greater than 5V" (unit is mV)
-        industrial_dual_analog_in.SetVoltageCallbackThreshold(1, ">"C, 5*1000, 0)
+        idai.SetVoltageCallbackThreshold(1, ">"C, 5*1000, 0)
 
         System.Console.WriteLine("Press key to exit")
         System.Console.ReadLine()

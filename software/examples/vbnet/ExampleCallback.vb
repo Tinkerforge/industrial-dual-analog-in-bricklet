@@ -14,8 +14,7 @@ Module ExampleCallback
 
     Sub Main()
         Dim ipcon As New IPConnection() ' Create IP connection
-        Dim industrial_dual_analog_in As _
-          New BrickletIndustrialDualAnalogIn(UID, ipcon) ' Create device object
+        Dim idai As New BrickletIndustrialDualAnalogIn(UID, ipcon) ' Create device object
 
         ipcon.Connect(HOST, PORT) ' Connect to brickd
         ' Don't use device before ipcon is connected
@@ -23,10 +22,10 @@ Module ExampleCallback
         ' Set Period (channel 1) for voltage callback to 1s (1000ms)
         ' Note: The voltage callback is only called every second if the 
         '       voltage has changed since the last call!
-        industrial_dual_analog_in.SetVoltageCallbackPeriod(1, 1000)
+        idai.SetVoltageCallbackPeriod(1, 1000)
 
         ' Register voltage callback to function VoltageCB
-        AddHandler industrial_dual_analog_in.Voltage, AddressOf VoltageCB
+        AddHandler idai.Voltage, AddressOf VoltageCB
 
         System.Console.WriteLine("Press key to exit")
         System.Console.ReadLine()
