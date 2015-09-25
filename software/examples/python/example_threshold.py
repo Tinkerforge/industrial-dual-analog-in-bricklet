@@ -8,9 +8,11 @@ UID = "XYZ" # Change to your UID
 from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn
 
-# Callback for voltage greater than 5V
-def cb_reached(channel, voltage):
-    print('Voltage (Channel' + str(channel) + ') is greater than 5V: ' + str(voltage/1000.0))
+# Callback function for voltage reached callback (parameter has unit mV)
+def cb_voltage_reached(channel, voltage):
+    print("Channel: " + str(channel))
+    print("Voltage: " + str(voltage/1000.0) + " V")
+    print("")
 
 if __name__ == "__main__":
     ipcon = IPConnection() # Create IP connection
@@ -22,11 +24,11 @@ if __name__ == "__main__":
     # Get threshold callbacks with a debounce time of 10 seconds (10000ms)
     idai.set_debounce_period(10000)
 
-    # Register threshold reached callback to function cb_reached
-    idai.register_callback(idai.CALLBACK_VOLTAGE_REACHED, cb_reached)
+    # Register voltage reached callback to function cb_voltage_reached
+    idai.register_callback(idai.CALLBACK_VOLTAGE_REACHED, cb_voltage_reached)
 
-    # Configure threshold (channel 1) for "greater than 5V" (unit is mV)
-    idai.set_voltage_callback_threshold(1, '>', 5*1000, 0)
+    # Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV)
+    idai.set_voltage_callback_threshold(1, ">", 10*1000, 0)
 
-    raw_input('Press key to exit\n') # Use input() in Python 3
+    raw_input("Press key to exit\n") # Use input() in Python 3
     ipcon.disconnect()

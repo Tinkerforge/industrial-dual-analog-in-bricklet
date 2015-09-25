@@ -1,3 +1,4 @@
+using System;
 using Tinkerforge;
 
 class Example
@@ -6,11 +7,12 @@ class Example
 	private static int PORT = 4223;
 	private static string UID = "XYZ"; // Change to your UID
 
-	// Callback for voltage greater than 5V
-	static void ReachedCB(BrickletIndustrialDualAnalogIn sender, byte channel, int voltage)
+	// Callback function for voltage reached callback (parameter has unit mV)
+	static void VoltageReachedCB(BrickletIndustrialDualAnalogIn sender, byte channel, int voltage)
 	{
-		System.Console.WriteLine("Voltage (Channel " + channel + ") is greater than 5V: " +
-		                         voltage/1000.0 + "V");
+		Console.WriteLine("Channel: " + channel);
+		Console.WriteLine("Voltage: " + voltage/1000.0 + " V");
+		Console.WriteLine("");
 	}
 
 	static void Main()
@@ -22,17 +24,17 @@ class Example
 		ipcon.Connect(HOST, PORT); // Connect to brickd
 		// Don't use device before ipcon is connected
 
-		// Get threshold callbacks with a debounce time of 1 seconds (1000ms)
-		idai.SetDebouncePeriod(1000);
+		// Get threshold callbacks with a debounce time of 10 seconds (10000ms)
+		idai.SetDebouncePeriod(10000);
 
-		// Register threshold reached callback to function ReachedCB
-		idai.VoltageReached += ReachedCB;
+		// Register voltage reached callback to function VoltageReachedCB
+		idai.VoltageReached += VoltageReachedCB;
 
-		// Configure threshold (channel 1) for "greater than 5V" (unit is mV)
-		idai.SetVoltageCallbackThreshold(1, '>', 5*1000, 0);
+		// Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV)
+		idai.SetVoltageCallbackThreshold(1, '>', 10*1000, 0);
 
-		System.Console.WriteLine("Press enter to exit");
-		System.Console.ReadLine();
+		Console.WriteLine("Press enter to exit");
+		Console.ReadLine();
 		ipcon.Disconnect();
 	}
 }

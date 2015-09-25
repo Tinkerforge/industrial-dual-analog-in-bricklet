@@ -25,11 +25,13 @@ const
 var
   e: TExample;
 
-{ Callback function for voltage callback (parameter has unit mV) }
+{ Callback procedure for voltage callback (parameter has unit mV) }
 procedure TExample.VoltageCB(sender: TBrickletIndustrialDualAnalogIn;
                              const channel: byte; const voltage: longint);
 begin
-  WriteLn(Format('Voltage (channel %d): %f V', [channel, voltage/1000.0]));
+  WriteLn(Format('Channel: %d', [channel]));
+  WriteLn(Format('Voltage: %f V', [voltage/1000.0]));
+  WriteLn('');
 end;
 
 procedure TExample.Execute;
@@ -44,13 +46,13 @@ begin
   ipcon.Connect(HOST, PORT);
   { Don't use device before ipcon is connected }
 
-  { Set Period (channel 1) for voltage callback to 1s (1000ms)
-    Note: The voltage callback is only called every second if the
-          voltage has changed since the last call! }
-  idai.SetVoltageCallbackPeriod(1, 1000);
-
   { Register voltage callback to procedure VoltageCB }
   idai.OnVoltage := {$ifdef FPC}@{$endif}VoltageCB;
+
+  { Set period for voltage (channel 1) callback to 1s (1000ms)
+    Note: The voltage (channel 1) callback is only called every second
+          if the voltage (channel 1) has changed since the last call! }
+  idai.SetVoltageCallbackPeriod(1, 1000);
 
   WriteLn('Press key to exit');
   ReadLn;

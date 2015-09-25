@@ -12,8 +12,8 @@ type
     ipcon: TIPConnection;
     idai: TBrickletIndustrialDualAnalogIn;
   public
-    procedure ReachedCB(sender: TBrickletIndustrialDualAnalogIn;
-                        const channel: byte; const voltage: longint);
+    procedure VoltageReachedCB(sender: TBrickletIndustrialDualAnalogIn;
+                               const channel: byte; const voltage: longint);
     procedure Execute;
   end;
 
@@ -25,12 +25,13 @@ const
 var
   e: TExample;
 
-{ Callback for voltage greater than 5V }
-procedure TExample.ReachedCB(sender: TBrickletIndustrialDualAnalogIn;
-                             const channel: byte; const voltage: longint);
+{ Callback procedure for voltage reached callback (parameter has unit mV) }
+procedure TExample.VoltageReachedCB(sender: TBrickletIndustrialDualAnalogIn;
+                                    const channel: byte; const voltage: longint);
 begin
-  WriteLn(Format('Voltage (channel %d) is greater than 5V: %f V',
-                 [channel, voltage/1000.0]));
+  WriteLn(Format('Channel: %d', [channel]));
+  WriteLn(Format('Voltage: %f V', [voltage/1000.0]));
+  WriteLn('');
 end;
 
 procedure TExample.Execute;
@@ -48,11 +49,11 @@ begin
   { Get threshold callbacks with a debounce time of 10 seconds (10000ms) }
   idai.SetDebouncePeriod(10000);
 
-  { Register threshold reached callback to procedure ReachedCB }
-  idai.OnVoltageReached := {$ifdef FPC}@{$endif}ReachedCB;
+  { Register voltage reached callback to procedure VoltageReachedCB }
+  idai.OnVoltageReached := {$ifdef FPC}@{$endif}VoltageReachedCB;
 
-  { Configure threshold (channel 1) for "greater than 5V" (unit is mV) }
-  idai.SetVoltageCallbackThreshold(1, '>', 5*1000, 0);
+  { Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV) }
+  idai.SetVoltageCallbackThreshold(1, '>', 10*1000, 0);
 
   WriteLn('Press key to exit');
   ReadLn;

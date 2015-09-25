@@ -7,11 +7,13 @@
 #define PORT 4223
 #define UID "XYZ" // Change to your UID
 
-// Callback for voltage greater than 5V
-void cb_reached(uint8_t channel, int32_t voltage, void *user_data) {
+// Callback function for voltage reached callback (parameter has unit mV)
+void cb_voltage_reached(uint8_t channel, int32_t voltage, void *user_data) {
 	(void)user_data; // avoid unused parameter warning
 
-	printf("Voltage (Channel %d) is greater than 5V: %f\n", channel, voltage/1000.0);
+	printf("Channel: %d\n", channel);
+	printf("Voltage: %f V\n", voltage/1000.0);
+	printf("\n");
 }
 
 int main(void) {
@@ -33,14 +35,14 @@ int main(void) {
 	// Get threshold callbacks with a debounce time of 10 seconds (10000ms)
 	industrial_dual_analog_in_set_debounce_period(&idai, 10000);
 
-	// Register threshold reached callback to function cb_reached
+	// Register voltage reached callback to function cb_voltage_reached
 	industrial_dual_analog_in_register_callback(&idai,
 	                                            INDUSTRIAL_DUAL_ANALOG_IN_CALLBACK_VOLTAGE_REACHED,
-	                                            (void *)cb_reached,
+	                                            (void *)cb_voltage_reached,
 	                                            NULL);
 
-	// Configure threshold (channel 1) for "greater than 5V" (unit is mV)
-	industrial_dual_analog_in_set_voltage_callback_threshold(&idai, 1, '>', 5*1000, 0);
+	// Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV)
+	industrial_dual_analog_in_set_voltage_callback_threshold(&idai, 1, '>', 10*1000, 0);
 
 	printf("Press key to exit\n");
 	getchar();

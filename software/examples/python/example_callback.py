@@ -10,7 +10,9 @@ from tinkerforge.bricklet_industrial_dual_analog_in import BrickletIndustrialDua
 
 # Callback function for voltage callback (parameter has unit mV)
 def cb_voltage(channel, voltage):
-    print('Voltage (Channel ' + str(channel) + '): ' + str(voltage/1000.0) + ' V')
+    print("Channel: " + str(channel))
+    print("Voltage: " + str(voltage/1000.0) + " V")
+    print("")
 
 if __name__ == "__main__":
     ipcon = IPConnection() # Create IP connection
@@ -19,13 +21,13 @@ if __name__ == "__main__":
     ipcon.connect(HOST, PORT) # Connect to brickd
     # Don't use device before ipcon is connected
 
-    # Set Period (channel 1) for voltage callback to 1s (1000ms)
-    # Note: The callback is only called every second if the
-    #       voltage has changed since the last call!
-    idai.set_voltage_callback_period(1, 1000)
-
     # Register voltage callback to function cb_voltage
     idai.register_callback(idai.CALLBACK_VOLTAGE, cb_voltage)
 
-    raw_input('Press key to exit\n') # Use input() in Python 3
+    # Set period for voltage (channel 1) callback to 1s (1000ms)
+    # Note: The voltage (channel 1) callback is only called every second
+    #       if the voltage (channel 1) has changed since the last call!
+    idai.set_voltage_callback_period(1, 1000)
+
+    raw_input("Press key to exit\n") # Use input() in Python 3
     ipcon.disconnect()

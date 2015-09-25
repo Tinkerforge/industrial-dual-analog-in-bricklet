@@ -5,35 +5,38 @@ var PORT = 4223;
 var UID = 'XYZ'; // Change to your UID
 
 var ipcon = new Tinkerforge.IPConnection(); // Create IP connection
-var iain = new Tinkerforge.BrickletIndustrialDualAnalogIn(UID, ipcon); // Create device object
+var idai = new Tinkerforge.BrickletIndustrialDualAnalogIn(UID, ipcon); // Create device object
 
 ipcon.connect(HOST, PORT,
-    function(error) {
-        console.log('Error: '+error);
+    function (error) {
+        console.log('Error: ' + error);
     }
 ); // Connect to brickd
 // Don't use device before ipcon is connected
 
 ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED,
-    function(connectReason) {
+    function (connectReason) {
         // Get threshold callbacks with a debounce time of 10 seconds (10000ms)
-        iain.setDebouncePeriod(10000);
-        // Configure threshold (channel 1) for "greater than 5V" (unit is mV)
-        iain.setVoltageCallbackThreshold(1, '>', 5*1000, 0);
+        idai.setDebouncePeriod(10000);
+
+        // Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV)
+        idai.setVoltageCallbackThreshold(1, '>', 10*1000, 0);
     }
 );
 
-// Register threshold reached callback
-iain.on(Tinkerforge.BrickletIndustrialDualAnalogIn.CALLBACK_VOLTAGE_REACHED,
-    // Callback for voltage greater than 5V
-    function(channel, voltage) {
-        console.log('Voltage (channel '+channel+') is greater than 5V: '+voltage/1000+' V');
+// Register voltage reached callback
+idai.on(Tinkerforge.BrickletIndustrialDualAnalogIn.CALLBACK_VOLTAGE_REACHED,
+    // Callback function for voltage reached callback (parameter has unit mV)
+    function (channel, voltage) {
+        console.log('Channel: ' + channel);
+        console.log('Voltage: ' + voltage/1000.0 + ' V');
+        console.log();
     }
 );
 
-console.log("Press any key to exit ...");
+console.log('Press key to exit');
 process.stdin.on('data',
-    function(data) {
+    function (data) {
         ipcon.disconnect();
         process.exit(0);
     }

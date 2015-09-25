@@ -31,27 +31,30 @@
                     ipcon.disconnect();
                 }
                 ipcon = new Tinkerforge.IPConnection(); // Create IP connection
-                var iain = new Tinkerforge.BrickletIndustrialDualAnalogIn(UID, ipcon); // Create device object
+                var idai = new Tinkerforge.BrickletIndustrialDualAnalogIn(UID, ipcon); // Create device object
                 ipcon.connect(HOST, PORT,
                     function(error) {
-                        textArea.value += 'Error: '+error+ '\n';
+                        textArea.value += 'Error: ' + error + '\n';
                     }
                 ); // Connect to brickd
                 // Don't use device before ipcon is connected
 
                 ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED,
-                    function(connectReason) {
-                        // Set Period (channel 1) for voltage callback to 1s (1000ms)
-                        // Note: The callback is only called every second if the
-                        // voltage has changed since the last call!
-                        iain.setVoltageCallbackPeriod(1, 1000);
+                    function (connectReason) {
+                        // Set period for voltage (channel 1) callback to 1s (1000ms)
+                        // Note: The voltage (channel 1) callback is only called every second
+                        //       if the voltage (channel 1) has changed since the last call!
+                        idai.setVoltageCallbackPeriod(1, 1000);
                     }
                 );
+
                 // Register voltage callback
-                iain.on(Tinkerforge.BrickletIndustrialDualAnalogIn.CALLBACK_VOLTAGE,
-                    // Callback function for voltage callback (parameter has unit V)
-                    function(channel, voltage) {
-                        textArea.value += 'Voltage (channel '+channel+'): '+voltage/1000+' V\n';
+                idai.on(Tinkerforge.BrickletIndustrialDualAnalogIn.CALLBACK_VOLTAGE,
+                    // Callback function for voltage callback (parameter has unit mV)
+                    function (channel, voltage) {
+                        textArea.value += 'Channel: ' + channel + '\n';
+                        textArea.value += 'Voltage: ' + voltage/1000.0 + ' V\n';
+                        textArea.value += '\n';
                         textArea.scrollTop = textArea.scrollHeight;
                     }
                 );

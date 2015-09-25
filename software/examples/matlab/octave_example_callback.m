@@ -6,32 +6,34 @@ function octave_example_callback()
     UID = "XYZ"; % Change to your UID
 
     ipcon = java_new("com.tinkerforge.IPConnection"); % Create IP connection
-    iain = java_new("com.tinkerforge.BrickletIndustrialDualAnalogIn", UID, ipcon); % Create device object
+    idai = java_new("com.tinkerforge.BrickletIndustrialDualAnalogIn", UID, ipcon); % Create device object
 
     ipcon.connect(HOST, PORT); % Connect to brickd
     % Don't use device before ipcon is connected
 
-    % Set Period (channel 1) for voltage callback to 1s (1000ms)
-    % Note: The callback is only called every second if the
-    %       voltage has changed since the last call!
-    iain.setVoltageCallbackPeriod(1, 1000);
-
     % Register voltage callback to function cb_voltage
-    iain.addVoltageCallback(@cb_voltage);
+    idai.addVoltageCallback(@cb_voltage);
 
-    input("Press any key to exit...\n", "s");
+    % Set period for voltage (channel 1) callback to 1s (1000ms)
+    % Note: The voltage (channel 1) callback is only called every second
+    %       if the voltage (channel 1) has changed since the last call!
+    idai.setVoltageCallbackPeriod(1, 1000);
+
+    input("Press key to exit\n", "s");
     ipcon.disconnect();
 end
 
 % Callback function for voltage callback (parameter has unit mV)
 function cb_voltage(e)
-    fprintf("Voltage [channel %d]: %g V\n", short2int(e.channel), e.voltage/1000);
+    fprintf("Channel: %d\n", java2int(e.channel));
+    fprintf("Voltage: %g V\n", e.voltage/1000.0);
+    fprintf("\n");
 end
 
-function int = short2int(short)
+function int = java2int(value)
     if compare_versions(version(), "3.8", "<=")
-        int = short.intValue();
+        int = value.intValue();
     else
-        int = short;
+        int = value;
     end
 end

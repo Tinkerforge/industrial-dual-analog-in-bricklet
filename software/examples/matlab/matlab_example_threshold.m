@@ -7,25 +7,27 @@ function matlab_example_threshold()
     UID = 'XYZ'; % Change to your UID
 
     ipcon = IPConnection(); % Create IP connection
-    iain = BrickletIndustrialDualAnalogIn(UID, ipcon); % Create device object
+    idai = BrickletIndustrialDualAnalogIn(UID, ipcon); % Create device object
 
     ipcon.connect(HOST, PORT); % Connect to brickd
     % Don't use device before ipcon is connected
 
     % Get threshold callbacks with a debounce time of 10 seconds (10000ms)
-    iain.setDebouncePeriod(10000);
+    idai.setDebouncePeriod(10000);
 
-    % Register threshold reached callback to function cb_reached
-    set(iain, 'VoltageReachedCallback', @(h, e) cb_reached(e));
+    % Register voltage reached callback to function cb_voltage_reached
+    set(idai, 'VoltageReachedCallback', @(h, e) cb_voltage_reached(e));
 
-    % Configure threshold (channel 1) for "greater than 5V" (unit is mV)
-    iain.setVoltageCallbackThreshold(1, '>', 5*1000*1000, 0);
+    % Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV)
+    idai.setVoltageCallbackThreshold(1, '>', 10*1000, 0);
 
-    input('Press any key to exit...\n', 's');
+    input('Press key to exit\n', 's');
     ipcon.disconnect();
 end
 
-% Callback for voltage greater than 5V
-function cb_reached(e)
-    fprintf('Voltage [channel %g]: %g mA\n', e.channel, e.voltage/1000);
+% Callback function for voltage reached callback (parameter has unit mV)
+function cb_voltage_reached(e)
+    fprintf('Channel: %i\n', e.channel);
+    fprintf('Voltage: %g V\n', e.voltage/1000.0);
+    fprintf('\n');
 end

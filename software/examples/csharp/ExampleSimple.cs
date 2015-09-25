@@ -1,3 +1,4 @@
+using System;
 using Tinkerforge;
 
 class Example
@@ -17,10 +18,10 @@ class Example
 
 		// Get current voltage from channel 1 (unit is mV)
 		int voltage = idai.GetVoltage(1);
-		System.Console.WriteLine("Voltage (Channel 1): " + voltage/1000.0 + " V");
+		Console.WriteLine("Voltage (Channel 1): " + voltage/1000.0 + " V");
 
-		System.Console.WriteLine("Press enter to exit");
-		System.Console.ReadLine();
+		Console.WriteLine("Press enter to exit");
+		Console.ReadLine();
 		ipcon.Disconnect();
 	}
 }

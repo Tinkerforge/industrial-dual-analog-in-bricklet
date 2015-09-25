@@ -19,13 +19,15 @@ ipcon.connect HOST, PORT # Connect to brickd
 # Get threshold callbacks with a debounce time of 10 seconds (10000ms)
 idai.set_debounce_period 10000
 
-# Register threshold reached callback (unit is mV)
+# Register voltage reached callback (parameter has unit mV)
 idai.register_callback(BrickletIndustrialDualAnalogIn::CALLBACK_VOLTAGE_REACHED) do |channel, voltage|
-  puts "Voltage (Channel #{channel}) is greater than 5V: #{voltage/1000.0}"
+  puts "Channel: #{channel}"
+  puts "Voltage: #{voltage/1000.0} V"
+  puts ''
 end
 
-# Configure threshold (channel 1) for "greater than 5V" (unit is mV)
-idai.set_voltage_callback_threshold 1, '>', 5*1000, 0
+# Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV)
+idai.set_voltage_callback_threshold 1, '>', 10*1000, 0
 
 puts 'Press key to exit'
 $stdin.gets

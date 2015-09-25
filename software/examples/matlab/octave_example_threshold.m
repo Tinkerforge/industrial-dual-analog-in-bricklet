@@ -6,33 +6,35 @@ function octave_example_threshold()
     UID = "XYZ"; % Change to your UID
 
     ipcon = java_new("com.tinkerforge.IPConnection"); % Create IP connection
-    iain = java_new("com.tinkerforge.BrickletIndustrialDualAnalogIn", UID, ipcon); % Create device object
+    idai = java_new("com.tinkerforge.BrickletIndustrialDualAnalogIn", UID, ipcon); % Create device object
 
     ipcon.connect(HOST, PORT); % Connect to brickd
     % Don't use device before ipcon is connected
 
     % Get threshold callbacks with a debounce time of 10 seconds (10000ms)
-    iain.setDebouncePeriod(10000);
+    idai.setDebouncePeriod(10000);
 
-    % Register threshold reached callback to function cb_reached
-    iain.addVoltageReachedCallback(@cb_reached);
+    % Register voltage reached callback to function cb_voltage_reached
+    idai.addVoltageReachedCallback(@cb_voltage_reached);
 
-    % Configure threshold (channel 1) for "greater than 5V" (unit is mV)
-    iain.setVoltageCallbackThreshold(1, iain.THRESHOLD_OPTION_GREATER, 5*1000, 0);
+    % Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV)
+    idai.setVoltageCallbackThreshold(1, ">", 10*1000, 0);
 
-    input("Press any key to exit...\n", "s");
+    input("Press key to exit\n", "s");
     ipcon.disconnect();
 end
 
-% Callback function for voltage callback (parameter has unit mV)
-function cb_reached(e)
-    fprintf("Voltage [channel %d]: %g V\n", short2int(e.channel), e.voltage/1000);
+% Callback function for voltage reached callback (parameter has unit mV)
+function cb_voltage_reached(e)
+    fprintf("Channel: %d\n", java2int(e.channel));
+    fprintf("Voltage: %g V\n", e.voltage/1000.0);
+    fprintf("\n");
 end
 
-function int = short2int(short)
+function int = java2int(value)
     if compare_versions(version(), "3.8", "<=")
-        int = short.intValue();
+        int = value.intValue();
     else
-        int = short;
+        int = value;
     end
 end

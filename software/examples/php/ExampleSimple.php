@@ -11,15 +11,14 @@ const PORT = 4223;
 const UID = 'XYZ'; // Change to your UID
 
 $ipcon = new IPConnection(); // Create IP connection
-$iain = new BrickletIndustrialDualAnalogIn(UID, $ipcon); // Create device object
+$idai = new BrickletIndustrialDualAnalogIn(UID, $ipcon); // Create device object
 
 $ipcon->connect(HOST, PORT); // Connect to brickd
 // Don't use device before ipcon is connected
 
-// Get voltage voltage from channel 1 (unit is mV)
-$voltage = $iain->getVoltage(1) / 1000.0;
-
-echo "Voltage: $voltage V\n";
+// Get current voltage from channel 1 (unit is mV)
+$voltage = $idai->getVoltage(1);
+echo "Voltage (Channel 1): " . $voltage/1000.0 . " V\n";
 
 echo "Press key to exit\n";
 fgetc(fopen('php://stdin', 'r'));

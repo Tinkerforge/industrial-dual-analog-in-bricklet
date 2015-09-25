@@ -10,26 +10,28 @@ const HOST = 'localhost';
 const PORT = 4223;
 const UID = 'XYZ'; // Change to your UID
 
-// Callback for voltage greater than 5V
-function cb_reached($channel, $voltage)
+// Callback function for voltage reached callback (parameter has unit mV)
+function cb_voltageReached($channel, $voltage)
 {
-    echo "Voltage (channel " . $channel . ") is greater than 5V: " . $voltage / 1000.0 . "\n";
+    echo "Channel: $channel\n";
+    echo "Voltage: " . $voltage/1000.0 . " V\n";
+    echo "\n";
 }
 
 $ipcon = new IPConnection(); // Create IP connection
-$iain = new BrickletIndustrialDualAnalogIn(UID, $ipcon); // Create device object
+$idai = new BrickletIndustrialDualAnalogIn(UID, $ipcon); // Create device object
 
 $ipcon->connect(HOST, PORT); // Connect to brickd
 // Don't use device before ipcon is connected
 
 // Get threshold callbacks with a debounce time of 10 seconds (10000ms)
-$iain->setDebouncePeriod(10000);
+$idai->setDebouncePeriod(10000);
 
-// Register threshold reached callback to function cb_reached
-$iain->registerCallback(BrickletIndustrialDualAnalogIn::CALLBACK_VOLTAGE_REACHED, 'cb_reached');
+// Register voltage reached callback to function cb_voltageReached
+$idai->registerCallback(BrickletIndustrialDualAnalogIn::CALLBACK_VOLTAGE_REACHED, 'cb_voltageReached');
 
-// Configure threshold (channel 1) for "greater than 5V" (unit is mV)
-$iain->setVoltageCallbackThreshold(1, '>', 5*1000, 0);
+// Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV)
+$idai->setVoltageCallbackThreshold(1, '>', 10*1000, 0);
 
 echo "Press ctrl+c to exit\n";
 $ipcon->dispatchCallbacks(-1); // Dispatch callbacks forever

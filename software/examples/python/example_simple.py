@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     # Get current voltage from channel 1 (unit is mV)
     voltage = idai.get_voltage(1)
-    print('Voltage (Channel 1): ' + str(voltage/1000.0) + ' V')
+    print("Voltage (Channel 1): " + str(voltage/1000.0) + " V")
 
-    raw_input('Press key to exit\n') # Use input() in Python 3
+    raw_input("Press key to exit\n") # Use input() in Python 3
     ipcon.disconnect()

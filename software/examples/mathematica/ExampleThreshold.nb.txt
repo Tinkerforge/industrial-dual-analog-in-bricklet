@@ -3,29 +3,32 @@ LoadNETAssembly["Tinkerforge",NotebookDirectory[]<>"../../.."]
 
 host="localhost"
 port=4223
-uid="amb"(* Change to your UID *)
+uid="XYZ"(*Change to your UID*)
 
-(* Create IPConnection and device object *)
+(*Create IPConnection and device object*)
 ipcon=NETNew["Tinkerforge.IPConnection"]
-dai=NETNew["Tinkerforge.BrickletIndustrialDualAnalogIn",uid,ipcon]
+idai=NETNew["Tinkerforge.BrickletIndustrialDualAnalogIn",uid,ipcon]
 ipcon@Connect[host,port]
 
-(* Get threshold callbacks with a debounce time of 1 second (1000ms) *)
-dai@SetDebouncePeriod[1000]
+(*Get threshold callbacks with a debounce time of 10 seconds (10000ms)*)
+idai@SetDebouncePeriod[10000]
 
-(* Callback for voltage greater than 5V *)
+(*Callback function for voltage reached callback (parameter has unit mV)*)
 VoltageReachedCB[sender_,channel_,voltage_]:=
- Print["Voltage (channel "<>ToString[channel]<>") is greater than 5V: "<>
-       ToString[N[Quantity[voltage,"mV"]]]]
-AddEventHandler[dai@VoltageReached,VoltageReachedCB]
+ Module[{},
+  Print["Channel: "<>ToString[channel]];
+  Print["Voltage: "<>ToString[N[Quantity[voltage,"V/1000"]]]]
+ ]
 
-(* Configure threshold (channel 1) for "greater than 5V" (unit is mV) *)
+AddEventHandler[idai@VoltageReached,VoltageReachedCB]
+
+(*Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV)*)
 option=Tinkerforge`BrickletIndustrialDualAnalogIn`THRESHOLDUOPTIONUGREATER
-dai@SetVoltageCallbackThreshold[1,option,5*1000,0]
+idai@SetVoltageCallbackThreshold[1,option,10*1000,0]
 
 Input["Click OK to exit"]
 
-(* Clean up *)
+(*Clean up*)
 ipcon@Disconnect[]
-ReleaseNETObject[dai]
+ReleaseNETObject[idai]
 ReleaseNETObject[ipcon]

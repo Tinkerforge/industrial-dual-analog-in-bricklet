@@ -6,8 +6,8 @@ public class ExampleCallback {
 	private static final int PORT = 4223;
 	private static final String UID = "XYZ"; // Change to your UID
 
-	// Note: To make the example code cleaner we do not handle exceptions. Exceptions you
-	//       might normally want to catch are described in the documentation
+	// Note: To make the example code cleaner we do not handle exceptions. Exceptions
+	//       you might normally want to catch are described in the documentation
 	public static void main(String args[]) throws Exception {
 		IPConnection ipcon = new IPConnection(); // Create IP connection
 		BrickletIndustrialDualAnalogIn idai =
@@ -16,18 +16,19 @@ public class ExampleCallback {
 		ipcon.connect(HOST, PORT); // Connect to brickd
 		// Don't use device before ipcon is connected
 
-		// Set Period (channel 1) for voltage callback to 1s (1000ms)
-		// Note: The voltage callback is only called every second if the 
-		//       voltage has changed since the last call!
-		idai.setVoltageCallbackPeriod((short)1, 1000);
-
-		// Add and implement voltage listener (called if voltage changes)
+		// Add voltage listener (parameter has unit mV)
 		idai.addVoltageListener(new BrickletIndustrialDualAnalogIn.VoltageListener() {
 			public void voltage(short channel, int voltage) {
-				System.out.println("Voltage (Channel " + channel + "): " +
-				                   voltage/1000.0 + " V");
+				System.out.println("Channel: " + channel);
+				System.out.println("Voltage: " + voltage/1000.0 + " V");
+				System.out.println("");
 			}
 		});
+
+		// Set period for voltage (channel 1) callback to 1s (1000ms)
+		// Note: The voltage (channel 1) callback is only called every second
+		//       if the voltage (channel 1) has changed since the last call!
+		idai.setVoltageCallbackPeriod((short)1, 1000);
 
 		System.out.println("Press key to exit"); System.in.read();
 		ipcon.disconnect();

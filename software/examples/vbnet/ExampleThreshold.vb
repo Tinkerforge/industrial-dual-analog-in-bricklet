@@ -1,3 +1,4 @@
+Imports System
 Imports Tinkerforge
 
 Module ExampleThreshold
@@ -5,12 +6,11 @@ Module ExampleThreshold
     Const PORT As Integer = 4223
     Const UID As String = "XYZ" ' Change to your UID
 
-    '  Callback for voltage greater than 5V
-    Sub ReachedCB(ByVal sender As BrickletIndustrialDualAnalogIn,
-                  ByVal channel As Byte, ByVal voltage As Integer)
-        System.Console.WriteLine("Voltage (channel " + channel.ToString() + _
-                                 ") is greater than 5V: " + _
-                                 (voltage/1000.0).ToString() + "V")
+    ' Callback subroutine for voltage reached callback (parameter has unit mV)
+    Sub VoltageReachedCB(ByVal sender As BrickletIndustrialDualAnalogIn, ByVal channel As Byte, ByVal voltage As Integer)
+        Console.WriteLine("Channel: " + channel.ToString())
+        Console.WriteLine("Voltage: " + (voltage/1000.0).ToString() + " V")
+        Console.WriteLine("")
     End Sub
 
     Sub Main()
@@ -20,17 +20,17 @@ Module ExampleThreshold
         ipcon.Connect(HOST, PORT) ' Connect to brickd
         ' Don't use device before ipcon is connected
 
-        ' Get threshold callbacks with a debounce time of 1 seconds (1000ms)
-        idai.SetDebouncePeriod(1000)
+        ' Get threshold callbacks with a debounce time of 10 seconds (10000ms)
+        idai.SetDebouncePeriod(10000)
 
-        ' Register threshold reached callback to function ReachedCB
-        AddHandler idai.VoltageReached, AddressOf ReachedCB
+        ' Register voltage reached callback to subroutine VoltageReachedCB
+        AddHandler idai.VoltageReached, AddressOf VoltageReachedCB
 
-        ' Configure threshold (channel 1) for "greater than 5V" (unit is mV)
-        idai.SetVoltageCallbackThreshold(1, ">"C, 5*1000, 0)
+        ' Configure threshold for voltage "greater than 10 V" (unit is mV)
+        idai.SetVoltageCallbackThreshold(1, ">"C, 10*1000, 0)
 
-        System.Console.WriteLine("Press key to exit")
-        System.Console.ReadLine()
+        Console.WriteLine("Press key to exit")
+        Console.ReadLine()
         ipcon.Disconnect()
     End Sub
 End Module

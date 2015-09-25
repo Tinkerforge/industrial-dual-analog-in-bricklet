@@ -31,27 +31,31 @@
                     ipcon.disconnect();
                 }
                 ipcon = new Tinkerforge.IPConnection(); // Create IP connection
-                var iain = new Tinkerforge.BrickletIndustrialDualAnalogIn(UID, ipcon); // Create device object
+                var idai = new Tinkerforge.BrickletIndustrialDualAnalogIn(UID, ipcon); // Create device object
                 ipcon.connect(HOST, PORT,
                     function(error) {
-                        textArea.value += 'Error: '+error+ '\n';
+                        textArea.value += 'Error: ' + error + '\n';
                     }
                 ); // Connect to brickd
                 // Don't use device before ipcon is connected
 
                 ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED,
-                    function(connectReason) {
+                    function (connectReason) {
                         // Get threshold callbacks with a debounce time of 10 seconds (10000ms)
-                        iain.setDebouncePeriod(10000);
-                        // Configure threshold (channel 1) for "greater than 5V" (unit is mV)
-                        iain.setVoltageCallbackThreshold(1, '>', 5*1000, 0);
+                        idai.setDebouncePeriod(10000);
+
+                        // Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV)
+                        idai.setVoltageCallbackThreshold(1, '>', 10*1000, 0);
                     }
                 );
-                // Register threshold reached callback
-                iain.on(Tinkerforge.BrickletIndustrialDualAnalogIn.CALLBACK_VOLTAGE_REACHED,
-                    // Callback for voltage greater than 10mA
-                    function(channel, voltage) {
-                        textArea.value += 'Voltage (channel '+channel+') is greater than 5V: '+voltage/1000+' V\n';
+
+                // Register voltage reached callback
+                idai.on(Tinkerforge.BrickletIndustrialDualAnalogIn.CALLBACK_VOLTAGE_REACHED,
+                    // Callback function for voltage reached callback (parameter has unit mV)
+                    function (channel, voltage) {
+                        textArea.value += 'Channel: ' + channel + '\n';
+                        textArea.value += 'Voltage: ' + voltage/1000.0 + ' V\n';
+                        textArea.value += '\n';
                         textArea.scrollTop = textArea.scrollHeight;
                     }
                 );
