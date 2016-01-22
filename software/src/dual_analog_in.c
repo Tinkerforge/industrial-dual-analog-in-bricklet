@@ -177,30 +177,30 @@ void tick(const uint8_t tick_type) {
 	simple_tick(tick_type);
 }
 
-void select(void) {
+void mcp3911_select(void) {
 	SPI_NCS.pio->PIO_CODR = SPI_NCS.mask;
 }
 
-void deselect(void) {
+void mcp3911_deselect(void) {
 	SPI_NCS.pio->PIO_SODR = SPI_NCS.mask;
 }
 
 void mcp3911_read_register(const uint8_t reg, const uint8_t length, uint8_t *data) {
-	select();
+	mcp3911_select();
 	spibb_transceive_byte(ADDRESS_READ | ADDRESS_REGISTER(reg));
 	for(uint8_t i = 0; i < length; i++) {
 		data[i] = spibb_transceive_byte(0);
 	}
-	deselect();
+	mcp3911_deselect();
 }
 
 void mcp3911_write_register(const uint8_t reg, const uint8_t length, const uint8_t *data) {
-	select();
+	mcp3911_select();
 	spibb_transceive_byte(ADDRESS_WRITE | ADDRESS_REGISTER(reg));
 	for(uint8_t i = 0; i < length; i++) {
 		spibb_transceive_byte(data[i]);
 	}
-	deselect();
+	mcp3911_deselect();
 }
 
 void mcp3911_read_voltage(void) {
@@ -308,59 +308,59 @@ void use_new_sample_rate(void) {
 inline uint8_t mcp3911_get_gain(void) {
 	uint8_t value;
 
-	select();
+	mcp3911_select();
 	spibb_transceive_byte(ADDRESS_READ | ADDRESS_REGISTER(REG_GAIN));
 	value = spibb_transceive_byte(0);
-	deselect();
+	mcp3911_deselect();
 
 	return value;
 }
 
 inline void mcp3911_set_gain(const uint8_t value) {
-	select();
+	mcp3911_select();
 	spibb_transceive_byte(ADDRESS_WRITE | ADDRESS_REGISTER(REG_GAIN));
 	spibb_transceive_byte(value);
-	deselect();
+	mcp3911_deselect();
 }
 
 inline uint16_t mcp3911_get_status(void) {
 	uint16_t value;
 
-	select();
+	mcp3911_select();
 	spibb_transceive_byte(ADDRESS_READ | ADDRESS_REGISTER(REG_STATUS));
 	value = spibb_transceive_byte(0) << 8;
 	value |= spibb_transceive_byte(0);
-	deselect();
+	mcp3911_deselect();
 
 	return value;
 }
 
 inline void mcp3911_set_status(const uint16_t value) {
-	select();
+	mcp3911_select();
 	spibb_transceive_byte(ADDRESS_WRITE | ADDRESS_REGISTER(REG_STATUS));
 	spibb_transceive_byte((uint8_t)(value >> 8));
 	spibb_transceive_byte((uint8_t)value);
-	deselect();
+	mcp3911_deselect();
 }
 
 inline uint16_t mcp3911_get_config(void) {
 	uint16_t value;
 
-	select();
+	mcp3911_select();
 	spibb_transceive_byte(ADDRESS_READ | ADDRESS_REGISTER(REG_CONFIG));
 	value = spibb_transceive_byte(0) << 8;
 	value |= spibb_transceive_byte(0);
-	deselect();
+	mcp3911_deselect();
 
 	return value;
 }
 
 inline void mcp3911_set_config(const uint16_t value) {
-	select();
+	mcp3911_select();
 	spibb_transceive_byte(ADDRESS_WRITE | ADDRESS_REGISTER(REG_CONFIG));
 	spibb_transceive_byte((uint8_t)(value >> 8));
 	spibb_transceive_byte((uint8_t)value);
-	deselect();
+	mcp3911_deselect();
 }
 
 void get_sample_rate(const ComType com, const GetSampleRate *data) {
