@@ -7,8 +7,8 @@ Module ExampleCallback
     Const UID As String = "XYZ" ' Change to your UID
 
     ' Callback subroutine for voltage callback (parameter has unit mV)
-    Sub VoltageCB(ByVal sender As BrickletIndustrialDualAnalogIn, _
-                  ByVal channel As Byte, ByVal voltage As Integer)
+    Sub VoltageCB(ByVal sender As BrickletIndustrialDualAnalogIn, ByVal channel As Byte, _
+                  ByVal voltage As Integer)
         Console.WriteLine("Channel: " + channel.ToString())
         Console.WriteLine("Voltage: " + (voltage/1000.0).ToString() + " V")
         Console.WriteLine("")

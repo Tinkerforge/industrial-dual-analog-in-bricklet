@@ -12,8 +12,8 @@ type
     ipcon: TIPConnection;
     idai: TBrickletIndustrialDualAnalogIn;
   public
-    procedure VoltageReachedCB(sender: TBrickletIndustrialDualAnalogIn;
-                               const channel: byte; const voltage: longint);
+    procedure VoltageReachedCB(sender: TBrickletIndustrialDualAnalogIn; const channel: byte;
+                               const voltage: longint);
     procedure Execute;
   end;
 
@@ -26,8 +26,8 @@ var
   e: TExample;
 
 { Callback procedure for voltage reached callback (parameter has unit mV) }
-procedure TExample.VoltageReachedCB(sender: TBrickletIndustrialDualAnalogIn;
-                                    const channel: byte; const voltage: longint);
+procedure TExample.VoltageReachedCB(sender: TBrickletIndustrialDualAnalogIn; const channel: byte;
+                                    const voltage: longint);
 begin
   WriteLn(Format('Channel: %d', [channel]));
   WriteLn(Format('Voltage: %f V', [voltage/1000.0]));
