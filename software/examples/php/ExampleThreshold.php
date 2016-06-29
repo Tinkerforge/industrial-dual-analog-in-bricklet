@@ -28,7 +28,8 @@ $ipcon->connect(HOST, PORT); // Connect to brickd
 $idai->setDebouncePeriod(10000);
 
 // Register voltage reached callback to function cb_voltageReached
-$idai->registerCallback(BrickletIndustrialDualAnalogIn::CALLBACK_VOLTAGE_REACHED, 'cb_voltageReached');
+$idai->registerCallback(BrickletIndustrialDualAnalogIn::CALLBACK_VOLTAGE_REACHED,
+                        'cb_voltageReached');
 
 // Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV)
 $idai->setVoltageCallbackThreshold(1, '>', 10*1000, 0);
