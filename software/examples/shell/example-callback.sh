@@ -1,7 +1,7 @@
 #!/bin/sh
 # Connects to localhost:4223 by default, use --host and --port to change this
 
-uid=XYZ # Change to your UID
+uid=XYZ # Change XYZ to the UID of your Industrial Dual Analog In Bricklet
 
 # Handle incoming voltage callbacks (parameter has unit mV)
 tinkerforge dispatch industrial-dual-analog-in-bricklet $uid voltage &

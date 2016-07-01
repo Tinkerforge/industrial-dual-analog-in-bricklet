@@ -8,7 +8,7 @@ use Tinkerforge\BrickletIndustrialDualAnalogIn;
 
 const HOST = 'localhost';
 const PORT = 4223;
-const UID = 'XYZ'; // Change to your UID
+const UID = 'XYZ'; // Change XYZ to the UID of your Industrial Dual Analog In Bricklet
 
 $ipcon = new IPConnection(); // Create IP connection
 $idai = new BrickletIndustrialDualAnalogIn(UID, $ipcon); // Create device object

@@ -5,7 +5,7 @@
 
 #define HOST "localhost"
 #define PORT 4223
-#define UID "XYZ" // Change to your UID
+#define UID "XYZ" // Change XYZ to the UID of your Industrial Dual Analog In Bricklet
 
 // Callback function for voltage callback (parameter has unit mV)
 void cb_voltage(uint8_t channel, int32_t voltage, void *user_data) {

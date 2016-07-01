@@ -8,7 +8,7 @@ include Tinkerforge
 
 HOST = 'localhost'
 PORT = 4223
-UID = 'XYZ' # Change to your UID
+UID = 'XYZ' # Change XYZ to the UID of your Industrial Dual Analog In Bricklet
 
 ipcon = IPConnection.new # Create IP connection
 idai = BrickletIndustrialDualAnalogIn.new UID, ipcon # Create device object
@@ -17,7 +17,8 @@ ipcon.connect HOST, PORT # Connect to brickd
 # Don't use device before ipcon is connected
 
 # Register voltage callback (parameter has unit mV)
-idai.register_callback(BrickletIndustrialDualAnalogIn::CALLBACK_VOLTAGE) do |channel, voltage|
+idai.register_callback(BrickletIndustrialDualAnalogIn::CALLBACK_VOLTAGE) do |channel, \
+                                                                             voltage|
   puts "Channel: #{channel}"
   puts "Voltage: #{voltage/1000.0} V"
   puts ''

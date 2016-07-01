@@ -4,11 +4,11 @@ Imports Tinkerforge
 Module ExampleThreshold
     Const HOST As String = "localhost"
     Const PORT As Integer = 4223
-    Const UID As String = "XYZ" ' Change to your UID
+    Const UID As String = "XYZ" ' Change XYZ to the UID of your Industrial Dual Analog In Bricklet
 
     ' Callback subroutine for voltage reached callback (parameter has unit mV)
-    Sub VoltageReachedCB(ByVal sender As BrickletIndustrialDualAnalogIn, ByVal channel As Byte, _
-                         ByVal voltage As Integer)
+    Sub VoltageReachedCB(ByVal sender As BrickletIndustrialDualAnalogIn, _
+                         ByVal channel As Byte, ByVal voltage As Integer)
         Console.WriteLine("Channel: " + channel.ToString())
         Console.WriteLine("Voltage: " + (voltage/1000.0).ToString() + " V")
         Console.WriteLine("")

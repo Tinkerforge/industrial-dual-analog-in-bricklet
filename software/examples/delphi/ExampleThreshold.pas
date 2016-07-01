@@ -12,22 +12,22 @@ type
     ipcon: TIPConnection;
     idai: TBrickletIndustrialDualAnalogIn;
   public
-    procedure VoltageReachedCB(sender: TBrickletIndustrialDualAnalogIn; const channel: byte;
-                               const voltage: longint);
+    procedure VoltageReachedCB(sender: TBrickletIndustrialDualAnalogIn;
+                               const channel: byte; const voltage: longint);
     procedure Execute;
   end;
 
 const
   HOST = 'localhost';
   PORT = 4223;
-  UID = 'XYZ'; { Change to your UID }
+  UID = 'XYZ'; { Change XYZ to the UID of your Industrial Dual Analog In Bricklet }
 
 var
   e: TExample;
 
 { Callback procedure for voltage reached callback (parameter has unit mV) }
-procedure TExample.VoltageReachedCB(sender: TBrickletIndustrialDualAnalogIn; const channel: byte;
-                                    const voltage: longint);
+procedure TExample.VoltageReachedCB(sender: TBrickletIndustrialDualAnalogIn;
+                                    const channel: byte; const voltage: longint);
 begin
   WriteLn(Format('Channel: %d', [channel]));
   WriteLn(Format('Voltage: %f V', [voltage/1000.0]));

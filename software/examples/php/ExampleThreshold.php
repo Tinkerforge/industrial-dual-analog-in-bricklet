@@ -8,7 +8,7 @@ use Tinkerforge\BrickletIndustrialDualAnalogIn;
 
 const HOST = 'localhost';
 const PORT = 4223;
-const UID = 'XYZ'; // Change to your UID
+const UID = 'XYZ'; // Change XYZ to the UID of your Industrial Dual Analog In Bricklet
 
 // Callback function for voltage reached callback (parameter has unit mV)
 function cb_voltageReached($channel, $voltage)

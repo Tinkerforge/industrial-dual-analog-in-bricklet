@@ -3,7 +3,7 @@
 
 HOST = "localhost"
 PORT = 4223
-UID = "XYZ" # Change to your UID
+UID = "XYZ" # Change XYZ to the UID of your Industrial Dual Analog In Bricklet
 
 from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn

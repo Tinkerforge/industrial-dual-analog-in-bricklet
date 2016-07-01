@@ -5,10 +5,11 @@ class Example
 {
 	private static string HOST = "localhost";
 	private static int PORT = 4223;
-	private static string UID = "XYZ"; // Change to your UID
+	private static string UID = "XYZ"; // Change XYZ to the UID of your Industrial Dual Analog In Bricklet
 
 	// Callback function for voltage callback (parameter has unit mV)
-	static void VoltageCB(BrickletIndustrialDualAnalogIn sender, byte channel, int voltage)
+	static void VoltageCB(BrickletIndustrialDualAnalogIn sender, byte channel,
+	                      int voltage)
 	{
 		Console.WriteLine("Channel: " + channel);
 		Console.WriteLine("Voltage: " + voltage/1000.0 + " V");
