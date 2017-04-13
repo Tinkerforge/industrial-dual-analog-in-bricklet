@@ -29,7 +29,7 @@ class Example
 		idai.SetDebouncePeriod(10000);
 
 		// Register voltage reached callback to function VoltageReachedCB
-		idai.VoltageReached += VoltageReachedCB;
+		idai.VoltageReachedCallback += VoltageReachedCB;
 
 		// Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV)
 		idai.SetVoltageCallbackThreshold(1, '>', 10*1000, 0);

@@ -26,7 +26,7 @@ class Example
 		// Don't use device before ipcon is connected
 
 		// Register voltage callback to function VoltageCB
-		idai.Voltage += VoltageCB;
+		idai.VoltageCallback += VoltageCB;
 
 		// Set period for voltage (channel 1) callback to 1s (1000ms)
 		// Note: The voltage (channel 1) callback is only called every second
