@@ -10,7 +10,7 @@ tinkerforge call industrial-dual-analog-in-bricklet $uid set-debounce-period 100
 tinkerforge dispatch industrial-dual-analog-in-bricklet $uid voltage-reached &
 
 # Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV)
-tinkerforge call industrial-dual-analog-in-bricklet $uid set-voltage-callback-threshold 1 greater 10000 0
+tinkerforge call industrial-dual-analog-in-bricklet $uid set-voltage-callback-threshold 1 threshold-option-greater 10000 0
 
 echo "Press key to exit"; read dummy
 
