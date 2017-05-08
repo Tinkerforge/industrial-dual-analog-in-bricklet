@@ -11,7 +11,6 @@ LIBS:cmos4000
 LIBS:adc-dac
 LIBS:memory
 LIBS:xilinx
-LIBS:special
 LIBS:microcontrollers
 LIBS:dsp
 LIBS:microchip
@@ -1727,7 +1726,7 @@ F 1 "CDSOD323-T03SC" H 9550 3200 40  0000 C CNN
 F 2 "kicad-libraries:SOD-323" H 9550 3300 60  0001 C CNN
 F 3 "" H 9550 3300 60  0000 C CNN
 	1    9550 3300
-	0    1    1    0   
+	0    -1   -1   0   
 $EndComp
 $Comp
 L TVS D1
@@ -1738,7 +1737,7 @@ F 1 "CDSOD323-T05SC" H 9250 3200 40  0000 C CNN
 F 2 "kicad-libraries:SOD-323" H 9250 3300 60  0001 C CNN
 F 3 "" H 9250 3300 60  0000 C CNN
 	1    9250 3300
-	0    1    1    0   
+	0    -1   -1   0   
 $EndComp
 $Comp
 L AGND #PWR043
