@@ -5,8 +5,8 @@ function octave_example_threshold()
     PORT = 4223;
     UID = "XYZ"; % Change XYZ to the UID of your Industrial Dual Analog In Bricklet
 
-    ipcon = java_new("com.tinkerforge.IPConnection"); % Create IP connection
-    idai = java_new("com.tinkerforge.BrickletIndustrialDualAnalogIn", UID, ipcon); % Create device object
+    ipcon = javaObject("com.tinkerforge.IPConnection"); % Create IP connection
+    idai = javaObject("com.tinkerforge.BrickletIndustrialDualAnalogIn", UID, ipcon); % Create device object
 
     ipcon.connect(HOST, PORT); % Connect to brickd
     % Don't use device before ipcon is connected
