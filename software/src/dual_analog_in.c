@@ -227,6 +227,7 @@ void mcp3911_read_voltage(void) {
 
 	for(uint8_t i = 0; i < NUM_SIMPLE_VALUES; i++) {
 		BC->raw_value[i] = data[2 + 3 - i*3] | (data[1 + 3 - i*3] << 8) | (data[0 + 3 - i*3] << 16);
+		// 24 bit two's complement -> 32 bit two's complement
 		if(BC->raw_value[i] & 0x800000) {
 			BC->raw_value[i] |= 0xFF000000;
 		}
@@ -457,7 +458,7 @@ void load_calibration_from_mcp3911(int32_t offset[2], int32_t gain[2]) {
 	mcp3911_read_register(REG_OFFCAL_0, length, cal);
 	for(uint8_t i = 0; i < NUM_SIMPLE_VALUES; i++) {
 		offset[1-i] = cal[2+i*6] | (cal[1+i*6] << 8) | (cal[0+i*6] << 16);
-		// 24 bit twos complement -> 32 bit twos complement
+		// 24 bit two's complement -> 32 bit two's complement
 		if(offset[1-i] & 0x800000) {
 			offset[1-i] |= 0xFF000000;
 		}
