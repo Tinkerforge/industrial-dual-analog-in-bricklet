@@ -1,5 +1,4 @@
 EESchema Schematic File Version 2
-LIBS:tinkerforge
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -29,6 +28,7 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
+LIBS:industrial_dual_analog_in-cache
 EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
@@ -1284,7 +1284,7 @@ Ua = U_-*(R14+R8)/R14*R10/(R15+R10)-U_+*R8/R14
 Text Notes 8000 5550 0    60   ~ 0
 R14=R15 und R8=R10 -> Ua = R8/R14*(U_+ - U_-)
 Text Notes 8000 5150 0    60   ~ 0
-Range +-35.74V (0.6V), +-53.62V (0.9V)
+Range +-35.74V (0.6V), +-47.65V (0.8V)
 Wire Wire Line
 	1050 2500 1050 2450
 Connection ~ 2750 1100
