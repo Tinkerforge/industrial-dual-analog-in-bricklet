@@ -17,7 +17,7 @@ ipcon.connect HOST, PORT # Connect to brickd
 # Don't use device before ipcon is connected
 
 # Register voltage callback (parameter has unit mV)
-idai.register_callback(BrickletIndustrialDualAnalogIn::CALLBACK_VOLTAGE) do |channel, \
+idai.register_callback(BrickletIndustrialDualAnalogIn::CALLBACK_VOLTAGE) do |channel,
                                                                              voltage|
   puts "Channel: #{channel}"
   puts "Voltage: #{voltage/1000.0} V"

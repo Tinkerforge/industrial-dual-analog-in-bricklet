@@ -20,7 +20,7 @@ VoltageReachedCB[sender_,channel_,voltage_]:=
   Print["Voltage: "<>ToString[N[Quantity[voltage,"V/1000"]]]]
  ]
 
-AddEventHandler[idai@VoltageReached,VoltageReachedCB]
+AddEventHandler[idai@VoltageReachedCallback,VoltageReachedCB]
 
 (*Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV)*)
 option=Tinkerforge`BrickletIndustrialDualAnalogIn`THRESHOLDUOPTIONUGREATER

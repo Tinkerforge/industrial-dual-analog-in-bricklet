@@ -25,7 +25,7 @@ Module ExampleThreshold
         idai.SetDebouncePeriod(10000)
 
         ' Register voltage reached callback to subroutine VoltageReachedCB
-        AddHandler idai.VoltageReached, AddressOf VoltageReachedCB
+        AddHandler idai.VoltageReachedCallback, AddressOf VoltageReachedCB
 
         ' Configure threshold for voltage "greater than 10 V" (unit is mV)
         idai.SetVoltageCallbackThreshold(1, ">"C, 10*1000, 0)

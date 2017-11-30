@@ -20,7 +20,7 @@ ipcon.connect HOST, PORT # Connect to brickd
 idai.set_debounce_period 10000
 
 # Register voltage reached callback (parameter has unit mV)
-idai.register_callback(BrickletIndustrialDualAnalogIn::CALLBACK_VOLTAGE_REACHED) do |channel, \
+idai.register_callback(BrickletIndustrialDualAnalogIn::CALLBACK_VOLTAGE_REACHED) do |channel,
                                                                                      voltage|
   puts "Channel: #{channel}"
   puts "Voltage: #{voltage/1000.0} V"
