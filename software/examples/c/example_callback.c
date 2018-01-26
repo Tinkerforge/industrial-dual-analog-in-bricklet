@@ -11,7 +11,7 @@
 void cb_voltage(uint8_t channel, int32_t voltage, void *user_data) {
 	(void)user_data; // avoid unused parameter warning
 
-	printf("Channel: %d\n", channel);
+	printf("Channel: %u\n", channel);
 	printf("Voltage: %f V\n", voltage/1000.0);
 	printf("\n");
 }
