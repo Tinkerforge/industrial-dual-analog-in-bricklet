@@ -7,7 +7,7 @@ class Example
 	private static int PORT = 4223;
 	private static string UID = "XYZ"; // Change XYZ to the UID of your Industrial Dual Analog In Bricklet
 
-	// Callback function for voltage reached callback (parameter has unit mV)
+	// Callback function for voltage reached callback
 	static void VoltageReachedCB(BrickletIndustrialDualAnalogIn sender, byte channel,
 	                             int voltage)
 	{
@@ -31,7 +31,7 @@ class Example
 		// Register voltage reached callback to function VoltageReachedCB
 		idai.VoltageReachedCallback += VoltageReachedCB;
 
-		// Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV)
+		// Configure threshold for voltage (channel 1) "greater than 10 V"
 		idai.SetVoltageCallbackThreshold(1, '>', 10*1000, 0);
 
 		Console.WriteLine("Press enter to exit");

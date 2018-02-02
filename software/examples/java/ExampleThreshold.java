@@ -21,7 +21,7 @@ public class ExampleThreshold {
 		// Get threshold callbacks with a debounce time of 10 seconds (10000ms)
 		idai.setDebouncePeriod(10000);
 
-		// Add voltage reached listener (parameter has unit mV)
+		// Add voltage reached listener
 		idai.addVoltageReachedListener(new BrickletIndustrialDualAnalogIn.VoltageReachedListener() {
 			public void voltageReached(short channel, int voltage) {
 				System.out.println("Channel: " + channel);
@@ -30,7 +30,7 @@ public class ExampleThreshold {
 			}
 		});
 
-		// Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV)
+		// Configure threshold for voltage (channel 1) "greater than 10 V"
 		idai.setVoltageCallbackThreshold((short)1, '>', 10*1000, 0);
 
 		System.out.println("Press key to exit"); System.in.read();

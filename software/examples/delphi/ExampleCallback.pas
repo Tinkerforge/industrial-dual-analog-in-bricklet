@@ -25,7 +25,7 @@ const
 var
   e: TExample;
 
-{ Callback procedure for voltage callback (parameter has unit mV) }
+{ Callback procedure for voltage callback }
 procedure TExample.VoltageCB(sender: TBrickletIndustrialDualAnalogIn; const channel: byte;
                              const voltage: longint);
 begin

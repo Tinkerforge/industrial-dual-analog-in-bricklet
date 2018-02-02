@@ -23,7 +23,7 @@ int main(void) {
 	}
 	// Don't use device before ipcon is connected
 
-	// Get current voltage from channel 1 (unit is mV)
+	// Get current voltage from channel 1
 	int32_t voltage;
 	if(industrial_dual_analog_in_get_voltage(&idai, 1, &voltage) < 0) {
 		fprintf(stderr, "Could not get voltage from channel 1, probably timeout\n");

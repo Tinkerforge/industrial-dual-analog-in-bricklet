@@ -25,7 +25,7 @@ const
 var
   e: TExample;
 
-{ Callback procedure for voltage reached callback (parameter has unit mV) }
+{ Callback procedure for voltage reached callback }
 procedure TExample.VoltageReachedCB(sender: TBrickletIndustrialDualAnalogIn;
                                     const channel: byte; const voltage: longint);
 begin
@@ -52,7 +52,7 @@ begin
   { Register voltage reached callback to procedure VoltageReachedCB }
   idai.OnVoltageReached := {$ifdef FPC}@{$endif}VoltageReachedCB;
 
-  { Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV) }
+  { Configure threshold for voltage (channel 1) "greater than 10 V" }
   idai.SetVoltageCallbackThreshold(1, '>', 10*1000, 0);
 
   WriteLn('Press key to exit');

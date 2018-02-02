@@ -6,7 +6,7 @@ Module ExampleThreshold
     Const PORT As Integer = 4223
     Const UID As String = "XYZ" ' Change XYZ to the UID of your Industrial Dual Analog In Bricklet
 
-    ' Callback subroutine for voltage reached callback (parameter has unit mV)
+    ' Callback subroutine for voltage reached callback
     Sub VoltageReachedCB(ByVal sender As BrickletIndustrialDualAnalogIn, _
                          ByVal channel As Byte, ByVal voltage As Integer)
         Console.WriteLine("Channel: " + channel.ToString())
@@ -27,7 +27,7 @@ Module ExampleThreshold
         ' Register voltage reached callback to subroutine VoltageReachedCB
         AddHandler idai.VoltageReachedCallback, AddressOf VoltageReachedCB
 
-        ' Configure threshold for voltage "greater than 10 V" (unit is mV)
+        ' Configure threshold for voltage "greater than 10 V"
         idai.SetVoltageCallbackThreshold(1, ">"C, 10*1000, 0)
 
         Console.WriteLine("Press key to exit")

@@ -16,7 +16,7 @@ class Example
 		ipcon.Connect(HOST, PORT); // Connect to brickd
 		// Don't use device before ipcon is connected
 
-		// Get current voltage from channel 1 (unit is mV)
+		// Get current voltage from channel 1
 		int voltage = idai.GetVoltage(1);
 		Console.WriteLine("Voltage (Channel 1): " + voltage/1000.0 + " V");
 

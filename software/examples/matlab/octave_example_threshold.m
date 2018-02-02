@@ -17,14 +17,14 @@ function octave_example_threshold()
     % Register voltage reached callback to function cb_voltage_reached
     idai.addVoltageReachedCallback(@cb_voltage_reached);
 
-    % Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV)
+    % Configure threshold for voltage (channel 1) "greater than 10 V"
     idai.setVoltageCallbackThreshold(1, ">", 10*1000, 0);
 
     input("Press key to exit\n", "s");
     ipcon.disconnect();
 end
 
-% Callback function for voltage reached callback (parameter has unit mV)
+% Callback function for voltage reached callback
 function cb_voltage_reached(e)
     fprintf("Channel: %d\n", java2int(e.channel));
     fprintf("Voltage: %g V\n", e.voltage/1000.0);

@@ -10,7 +10,7 @@ const HOST = 'localhost';
 const PORT = 4223;
 const UID = 'XYZ'; // Change XYZ to the UID of your Industrial Dual Analog In Bricklet
 
-// Callback function for voltage reached callback (parameter has unit mV)
+// Callback function for voltage reached callback
 function cb_voltageReached($channel, $voltage)
 {
     echo "Channel: $channel\n";
@@ -31,7 +31,7 @@ $idai->setDebouncePeriod(10000);
 $idai->registerCallback(BrickletIndustrialDualAnalogIn::CALLBACK_VOLTAGE_REACHED,
                         'cb_voltageReached');
 
-// Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV)
+// Configure threshold for voltage (channel 1) "greater than 10 V"
 $idai->setVoltageCallbackThreshold(1, '>', 10*1000, 0);
 
 echo "Press ctrl+c to exit\n";

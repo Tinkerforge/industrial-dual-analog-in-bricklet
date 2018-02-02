@@ -36,7 +36,7 @@ begin
   ipcon.Connect(HOST, PORT);
   { Don't use device before ipcon is connected }
 
-  { Get current voltage from channel 1 (unit is mV) }
+  { Get current voltage from channel 1 }
   voltage := idai.GetVoltage(1);
   WriteLn(Format('Voltage (Channel 1): %f V', [voltage/1000.0]));
 

@@ -22,14 +22,14 @@ Notebook[{
    RowBox[{"idai", "@", RowBox[{"SetDebouncePeriod", "[", "10000", "]"}]}],
    RowBox[{"
 "}],
-   RowBox[{"(*", "Callback function for voltage reached callback (parameter has unit mV)", "*)"}],
+   RowBox[{"(*", "Callback function for voltage reached callback", "*)"}],
    RowBox[{RowBox[{"VoltageReachedCB", "[", RowBox[{"sender_", ",", "channel_", ",", "voltage_"}], "]"}], ":=", "\[IndentingNewLine]", RowBox[{"Module", "[", RowBox[{RowBox[{"{", "}"}], ",", RowBox[{"\[IndentingNewLine]", RowBox[{"Print", "[", RowBox[{"\"\<Channel: \>\"", "<>", RowBox[{"ToString", "[", "channel", "]"}]}], "]"}], ";", "\[IndentingNewLine]", RowBox[{"Print", "[", RowBox[{"\"\<Voltage: \>\"", "<>", RowBox[{"ToString", "[", RowBox[{"N", "[", RowBox[{"Quantity", "[", RowBox[{"voltage", ",", "\"\<V/1000\>\""}], "]"}], "]"}], "]"}]}], "]"}], "\[IndentingNewLine]"}]}], "]"}]}],
    RowBox[{"
 "}],
    RowBox[{"AddEventHandler", "[", RowBox[{RowBox[{"idai", "@", "VoltageReachedCallback"}], ",", "VoltageReachedCB"}], "]"}],
    RowBox[{"
 "}],
-   RowBox[{"(*", "Configure threshold for voltage (channel 1) ", "\"\<greater than 10 V\>\"", " (unit is mV)", "*)"}],
+   RowBox[{"(*", "Configure threshold for voltage (channel 1) ", "\"\<greater than 10 V\>\"", "", "*)"}],
    RowBox[{"option", "=", "Tinkerforge`BrickletIndustrialDualAnalogIn`THRESHOLDUOPTIONUGREATER"}],
    RowBox[{"idai", "@", RowBox[{"SetVoltageCallbackThreshold", "[", RowBox[{"1", ",", "option", ",", RowBox[{"10", "*", "1000"}], ",", "0"}], "]"}]}],
    RowBox[{"

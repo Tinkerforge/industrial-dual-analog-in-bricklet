@@ -16,7 +16,7 @@ ipcon.connect(HOST, PORT,
 
 ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED,
     function (connectReason) {
-        // Get current voltage from channel 1 (unit is mV)
+        // Get current voltage from channel 1
         idai.getVoltage(1,
             function (voltage) {
                 console.log('Voltage (Channel 1): ' + voltage/1000.0 + ' V');

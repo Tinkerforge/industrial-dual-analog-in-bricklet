@@ -16,7 +16,7 @@ idai = BrickletIndustrialDualAnalogIn.new UID, ipcon # Create device object
 ipcon.connect HOST, PORT # Connect to brickd
 # Don't use device before ipcon is connected
 
-# Register voltage callback (parameter has unit mV)
+# Register voltage callback
 idai.register_callback(BrickletIndustrialDualAnalogIn::CALLBACK_VOLTAGE) do |channel,
                                                                              voltage|
   puts "Channel: #{channel}"

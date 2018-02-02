@@ -50,7 +50,7 @@
 
                 // Register voltage callback
                 idai.on(Tinkerforge.BrickletIndustrialDualAnalogIn.CALLBACK_VOLTAGE,
-                    // Callback function for voltage callback (parameter has unit mV)
+                    // Callback function for voltage callback
                     function (channel, voltage) {
                         textArea.value += 'Channel: ' + channel + '\n';
                         textArea.value += 'Voltage: ' + voltage/1000.0 + ' V\n';

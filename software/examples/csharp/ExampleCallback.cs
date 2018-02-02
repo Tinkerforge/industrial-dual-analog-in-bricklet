@@ -7,7 +7,7 @@ class Example
 	private static int PORT = 4223;
 	private static string UID = "XYZ"; // Change XYZ to the UID of your Industrial Dual Analog In Bricklet
 
-	// Callback function for voltage callback (parameter has unit mV)
+	// Callback function for voltage callback
 	static void VoltageCB(BrickletIndustrialDualAnalogIn sender, byte channel,
 	                      int voltage)
 	{

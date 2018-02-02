@@ -6,7 +6,7 @@ Module ExampleCallback
     Const PORT As Integer = 4223
     Const UID As String = "XYZ" ' Change XYZ to the UID of your Industrial Dual Analog In Bricklet
 
-    ' Callback subroutine for voltage callback (parameter has unit mV)
+    ' Callback subroutine for voltage callback
     Sub VoltageCB(ByVal sender As BrickletIndustrialDualAnalogIn, ByVal channel As Byte, _
                   ByVal voltage As Integer)
         Console.WriteLine("Channel: " + channel.ToString())

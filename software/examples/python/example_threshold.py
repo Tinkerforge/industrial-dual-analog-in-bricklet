@@ -8,7 +8,7 @@ UID = "XYZ" # Change XYZ to the UID of your Industrial Dual Analog In Bricklet
 from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn
 
-# Callback function for voltage reached callback (parameter has unit mV)
+# Callback function for voltage reached callback
 def cb_voltage_reached(channel, voltage):
     print("Channel: " + str(channel))
     print("Voltage: " + str(voltage/1000.0) + " V")
@@ -27,7 +27,7 @@ if __name__ == "__main__":
     # Register voltage reached callback to function cb_voltage_reached
     idai.register_callback(idai.CALLBACK_VOLTAGE_REACHED, cb_voltage_reached)
 
-    # Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV)
+    # Configure threshold for voltage (channel 1) "greater than 10 V"
     idai.set_voltage_callback_threshold(1, ">", 10*1000, 0)
 
     raw_input("Press key to exit\n") # Use input() in Python 3

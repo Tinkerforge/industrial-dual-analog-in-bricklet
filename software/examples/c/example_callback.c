@@ -7,7 +7,7 @@
 #define PORT 4223
 #define UID "XYZ" // Change XYZ to the UID of your Industrial Dual Analog In Bricklet
 
-// Callback function for voltage callback (parameter has unit mV)
+// Callback function for voltage callback
 void cb_voltage(uint8_t channel, int32_t voltage, void *user_data) {
 	(void)user_data; // avoid unused parameter warning
 

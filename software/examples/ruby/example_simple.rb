@@ -16,7 +16,7 @@ idai = BrickletIndustrialDualAnalogIn.new UID, ipcon # Create device object
 ipcon.connect HOST, PORT # Connect to brickd
 # Don't use device before ipcon is connected
 
-# Get current voltage from channel 1 (unit is mV)
+# Get current voltage from channel 1
 voltage = idai.get_voltage 1
 puts "Voltage (Channel 1): #{voltage/1000.0} V"
 

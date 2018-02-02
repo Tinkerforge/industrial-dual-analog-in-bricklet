@@ -25,7 +25,7 @@ ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED,
 
 // Register voltage callback
 idai.on(Tinkerforge.BrickletIndustrialDualAnalogIn.CALLBACK_VOLTAGE,
-    // Callback function for voltage callback (parameter has unit mV)
+    // Callback function for voltage callback
     function (channel, voltage) {
         console.log('Channel: ' + channel);
         console.log('Voltage: ' + voltage/1000.0 + ' V');

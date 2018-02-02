@@ -3,7 +3,7 @@
 
 uid=XYZ # Change XYZ to the UID of your Industrial Dual Analog In Bricklet
 
-# Handle incoming voltage callbacks (parameter has unit mV)
+# Handle incoming voltage callbacks
 tinkerforge dispatch industrial-dual-analog-in-bricklet $uid voltage &
 
 # Set period for voltage (channel 1) callback to 1s (1000ms)

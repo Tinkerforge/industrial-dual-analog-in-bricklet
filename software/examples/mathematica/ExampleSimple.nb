@@ -18,7 +18,7 @@ Notebook[{
    RowBox[{"ipcon", "@", RowBox[{"Connect", "[", RowBox[{"host", ",", "port"}], "]"}]}],
    RowBox[{"
 "}],
-   RowBox[{"(*", "Get current voltage from channel 1 (unit is mV)", "*)"}],
+   RowBox[{"(*", "Get current voltage from channel 1", "*)"}],
    RowBox[{"Print", "[", RowBox[{"\"\<Voltage (Channel 1): \>\"", "<>", RowBox[{"ToString", "[", RowBox[{"N", "[", RowBox[{"Quantity", "[", RowBox[{RowBox[{"idai", "@", RowBox[{"GetVoltage", "[", "1", "]"}]}], ",", "\"\<V/1000\>\""}], "]"}], "]"}], "]"}]}], "]"}],
    RowBox[{"
 "}],

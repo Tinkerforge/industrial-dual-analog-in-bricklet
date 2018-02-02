@@ -18,14 +18,14 @@ function matlab_example_threshold()
     % Register voltage reached callback to function cb_voltage_reached
     set(idai, 'VoltageReachedCallback', @(h, e) cb_voltage_reached(e));
 
-    % Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV)
+    % Configure threshold for voltage (channel 1) "greater than 10 V"
     idai.setVoltageCallbackThreshold(1, '>', 10*1000, 0);
 
     input('Press key to exit\n', 's');
     ipcon.disconnect();
 end
 
-% Callback function for voltage reached callback (parameter has unit mV)
+% Callback function for voltage reached callback
 function cb_voltage_reached(e)
     fprintf('Channel: %i\n', e.channel);
     fprintf('Voltage: %g V\n', e.voltage/1000.0);

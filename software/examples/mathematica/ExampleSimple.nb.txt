@@ -10,7 +10,7 @@ ipcon=NETNew["Tinkerforge.IPConnection"]
 idai=NETNew["Tinkerforge.BrickletIndustrialDualAnalogIn",uid,ipcon]
 ipcon@Connect[host,port]
 
-(*Get current voltage from channel 1 (unit is mV)*)
+(*Get current voltage from channel 1*)
 Print["Voltage (Channel 1): "<>ToString[N[Quantity[idai@GetVoltage[1],"V/1000"]]]]
 
 (*Clean up*)

@@ -13,7 +13,7 @@ ipcon@Connect[host,port]
 (*Get threshold callbacks with a debounce time of 10 seconds (10000ms)*)
 idai@SetDebouncePeriod[10000]
 
-(*Callback function for voltage reached callback (parameter has unit mV)*)
+(*Callback function for voltage reached callback*)
 VoltageReachedCB[sender_,channel_,voltage_]:=
  Module[{},
   Print["Channel: "<>ToString[channel]];
@@ -22,7 +22,7 @@ VoltageReachedCB[sender_,channel_,voltage_]:=
 
 AddEventHandler[idai@VoltageReachedCallback,VoltageReachedCB]
 
-(*Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV)*)
+(*Configure threshold for voltage (channel 1) "greater than 10 V"*)
 option=Tinkerforge`BrickletIndustrialDualAnalogIn`THRESHOLDUOPTIONUGREATER
 idai@SetVoltageCallbackThreshold[1,option,10*1000,0]
 

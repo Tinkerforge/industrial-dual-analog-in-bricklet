@@ -10,7 +10,7 @@ const HOST = 'localhost';
 const PORT = 4223;
 const UID = 'XYZ'; // Change XYZ to the UID of your Industrial Dual Analog In Bricklet
 
-// Callback function for voltage callback (parameter has unit mV)
+// Callback function for voltage callback
 function cb_voltage($channel, $voltage)
 {
     echo "Channel: $channel\n";

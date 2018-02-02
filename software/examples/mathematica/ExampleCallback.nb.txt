@@ -10,7 +10,7 @@ ipcon=NETNew["Tinkerforge.IPConnection"]
 idai=NETNew["Tinkerforge.BrickletIndustrialDualAnalogIn",uid,ipcon]
 ipcon@Connect[host,port]
 
-(*Callback function for voltage callback (parameter has unit mV)*)
+(*Callback function for voltage callback*)
 VoltageCB[sender_,channel_,voltage_]:=
  Module[{},
   Print["Channel: "<>ToString[channel]];

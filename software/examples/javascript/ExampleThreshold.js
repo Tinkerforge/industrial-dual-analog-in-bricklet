@@ -19,14 +19,14 @@ ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED,
         // Get threshold callbacks with a debounce time of 10 seconds (10000ms)
         idai.setDebouncePeriod(10000);
 
-        // Configure threshold for voltage (channel 1) "greater than 10 V" (unit is mV)
+        // Configure threshold for voltage (channel 1) "greater than 10 V"
         idai.setVoltageCallbackThreshold(1, '>', 10*1000, 0);
     }
 );
 
 // Register voltage reached callback
 idai.on(Tinkerforge.BrickletIndustrialDualAnalogIn.CALLBACK_VOLTAGE_REACHED,
-    // Callback function for voltage reached callback (parameter has unit mV)
+    // Callback function for voltage reached callback
     function (channel, voltage) {
         console.log('Channel: ' + channel);
         console.log('Voltage: ' + voltage/1000.0 + ' V');
