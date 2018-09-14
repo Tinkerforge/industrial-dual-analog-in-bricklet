@@ -27,7 +27,7 @@ Module ExampleThreshold
         ' Register voltage reached callback to subroutine VoltageReachedCB
         AddHandler idai.VoltageReachedCallback, AddressOf VoltageReachedCB
 
-        ' Configure threshold for voltage "greater than 10 V"
+        ' Configure threshold for voltage (channel 1) "greater than 10 V"
         idai.SetVoltageCallbackThreshold(1, ">"C, 10*1000, 0)
 
         Console.WriteLine("Press key to exit")
