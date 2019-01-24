@@ -1,0 +1,12 @@
+
+
+# Change XYZ to the UID of your Industrial Dual Analog In Bricklet
+
+setup:
+	# Get threshold callbacks with a debounce time of 10 seconds (10000ms)
+	publish '{"debounce": 10000}' to tinkerforge/request/industrial-dual-analog-in_bricklet/XYZ/set_debounce_period
+	# Handle incoming voltage reached callbacks
+	subscribe to tinkerforge/callback/industrial_dual_analog_in_bricklet/XYZ/voltage_reached
+	publish '{"register": true}' to tinkerforge/register/industrial_dual_analog_in_bricklet/XYZ/voltage_reached # Register voltage_reached callback
+	# Configure threshold for voltage (channel 1) "greater than 10 V"
+	publish '{"channel": 1, "option": "greater", "min_voltage": 10000, "max_voltage": 0}' to tinkerforge/request/industrial_dual_analog_in_bricklet/XYZ/set_voltage_callback_threshold
