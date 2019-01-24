@@ -2,5 +2,5 @@
 
 setup:
 	# Get current voltage from channel 1
-	subscribe to tinkerforge/response/industrial_dual_analog_in/XYZ/get_voltage
+	subscribe to tinkerforge/response/industrial_dual_analog_in_bricklet/XYZ/get_voltage
 	publish '{ "channel": 1}' to tinkerforge/request/industrial_dual_analog_in_bricklet/XYZ/get_voltage 
