@@ -38,7 +38,7 @@ int main(void) {
 	// Register voltage reached callback to function cb_voltage_reached
 	industrial_dual_analog_in_register_callback(&idai,
 	                                            INDUSTRIAL_DUAL_ANALOG_IN_CALLBACK_VOLTAGE_REACHED,
-	                                            (void *)cb_voltage_reached,
+	                                            (void (*)(void))cb_voltage_reached,
 	                                            NULL);
 
 	// Configure threshold for voltage (channel 1) "greater than 10 V"
