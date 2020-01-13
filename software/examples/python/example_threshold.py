@@ -30,5 +30,5 @@ if __name__ == "__main__":
     # Configure threshold for voltage (channel 1) "greater than 10 V"
     idai.set_voltage_callback_threshold(1, ">", 10*1000, 0)
 
-    raw_input("Press key to exit\n") # Use input() in Python 3
+    input("Press key to exit\n") # Use raw_input() in Python 2
     ipcon.disconnect()
