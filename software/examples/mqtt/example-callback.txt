@@ -4,7 +4,7 @@ setup:
 	# Handle incoming voltage callbacks
 	subscribe to tinkerforge/callback/industrial_dual_analog_in_bricklet/XYZ/voltage
 	publish '{"register": true}' to tinkerforge/register/industrial_dual_analog_in_bricklet/XYZ/voltage # Register voltage callback
-	
+
 	# Set period for voltage (channel 1) callback to 1s (1000ms)
 	# Note: The voltage (channel 1) callback is only called every second
 	#       if the voltage (channel 1) has changed since the last call!
